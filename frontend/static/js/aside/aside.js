@@ -13,8 +13,20 @@ export class Aside {
 				view: () => console.log("/")
 			},
 			{
-				path: "/dashboard",
-				view: () => console.log("/dashboard")
+				path: "/data",
+				view: () => console.log("/data")
+			},
+			{
+				path: "/pay",
+				view: () => console.log("/pay")
+			},
+			{
+				path: "/schedule",
+				view: () => console.log("/schedule")
+			},
+			{
+				path: "/plan",
+				view: () => console.log("/plan")
 			},
 			{
 				path: "/settings",
@@ -31,12 +43,13 @@ export class Aside {
 		if (!searchLink) searchLink = { route: routes[0], isActive: true };
 		searchLink.route.view();
 	}
-	createLink(ref, inner) {
+	createLink(ref, inner, classAdd) {
 		const link = document.createElement("a");
 		link.setAttribute("href", ref);
 		link.setAttribute("data-link", "");
 		link.innerText = inner;
 		link.classList.add("menu__link");
+		link.classList.add(classAdd);
 		return link;
 	}
 	routeToPage(e) {
@@ -49,10 +62,28 @@ export class Aside {
 		const wrap = document.createElement("div");
 		wrap.classList.add("aside");
 		wrap.addEventListener("click", (e) => this.routeToPage(e));
+
+		const title = document.createElement("h1");
+
+		title.classList.add("main-title");
+
+		const exit = document.createElement("button");
+		exit.classList.add("exit-button");
+		const span = document.createElement("span");
+		exit.innerText = "Exit";
+		exit.prepend(span);
+
 		const nav = document.createElement("nav");
 		nav.className = "aside__menu menu";
-		wrap.append(nav);
-		nav.append(this.createLink("/", "Home"), this.createLink("/dashboard", "Dashboard"), this.createLink("/settings", "Settings"));
+		wrap.append(title, nav, exit);
+		nav.append(
+			this.createLink("/", "Home", "link-home"),
+			this.createLink("/data", "Data", "link-data"),
+			this.createLink("/pay", "Pay", "link-pay"),
+			this.createLink("/schedule", "Schedule", "link-schedule"),
+			this.createLink("/plan", "Plan", "link-plan"),
+			this.createLink("/settings", "Settings", "link-settings")
+		);
 		return wrap;
 	}
 }
