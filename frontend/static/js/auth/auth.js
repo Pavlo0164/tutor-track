@@ -39,27 +39,11 @@ export class Auth {
 	validateInput(event) {
 		const type = event.target.getAttribute("type");
 		if (type === "email") {
-			if (this.checkEmail.regExp.test(event.target.value)) {
-				this.checkEmail.checked = true;
-				this.check("email", "not-valid", "valid", "", { flag: "remove" });
-			} else {
-				this.checkEmail.checked = false;
-				this.check("email", "valid", "not-valid", "Wrong email", { flag: "add" });
-			}
+			if (this.checkEmail.regExp.test(event.target.value)) this.checkEmail.checked = true;
+			else this.checkEmail.checked = false;
 		} else if (type === "password") {
-			if (this.checkPassword.regExp.test(event.target.value)) {
-				this.checkPassword.checked = true;
-				this.check("password", "not-valid", "valid", "", { flag: "remove" });
-			} else {
-				this.checkPassword.checked = false;
-				this.check(
-					"password",
-					"valid",
-					"not-valid",
-					"The password must contain at least one capital letter, at least one number, and at least one special character",
-					{ flag: "add" }
-				);
-			}
+			if (this.checkPassword.regExp.test(event.target.value)) this.checkPassword.checked = true;
+			else this.checkPassword.checked = false;
 		}
 	}
 	createInput(labelInner, type) {

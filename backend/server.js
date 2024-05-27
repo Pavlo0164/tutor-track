@@ -4,8 +4,8 @@ const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
 const cors = require("cors");
 const corsOptions = {
-	origin: "http://localhost:5000", // Дозволяє запити лише з цього домену
-	optionsSuccessStatus: 200 // Для старих браузерів
+	origin: "http://localhost:5000",
+	optionsSuccessStatus: 200
 };
 const app = express();
 app.use(cors(corsOptions));
