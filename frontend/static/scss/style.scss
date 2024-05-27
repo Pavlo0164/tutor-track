@@ -146,6 +146,8 @@ body {
 .aside {
 	border-right: 1px solid #7b7c81;
 	background-color: #2c1616;
+	display: flex;
+	flex-direction: column;
 }
 .input-wrapper {
 	display: flex;
@@ -236,10 +238,11 @@ span.result-input {
 .exit-button {
 	display: flex;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	font-size: 25px;
 	gap: 10px;
 	padding: 3px 20px;
+	flex-grow: 1;
 	width: 100%;
 	& span {
 		display: block;
@@ -253,27 +256,50 @@ span.result-input {
 }
 .header {
 	border-bottom: 1px solid #7b7c81;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	padding-bottom: 24px;
 	& h3 {
 		font-size: 40px;
-		padding-bottom: 24px;
 	}
 }
-
-// .link-home{
-
-// }
-// .link-data{
-
-// }
-// .link-pay{
-
-// }
-// .link-schedule{
-
-// }
-// .link-plan{
-
-// }
-// .link-settings{
-
-// }
+.footer-text {
+	color: #7b7c81;
+	font-size: 12px;
+	text-align: center;
+	padding: 30px;
+	& span {
+		color: #7b586b;
+	}
+}
+.image-wrap {
+	width: 40px;
+	height: 40px;
+	& img {
+		width: 100%;
+		height: 100%;
+	}
+}
+.user-group {
+	display: flex;
+	align-items: center;
+	& > div:first-child {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+	& p {
+		text-align: end;
+		font-weight: 300;
+		font-size: 14px;
+	}
+}
+.result-err {
+	font-weight: 300;
+	color: red;
+	font-size: 14px;
+	line-height: 1.5;
+	border-radius: 5px;
+	background-color: rgba(255, 0, 0, 0.193);
+}

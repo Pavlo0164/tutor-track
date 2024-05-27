@@ -2,47 +2,6 @@ export class Aside {
 	constructor() {
 		this.el = this.render();
 	}
-	changeHref(href) {
-		history.pushState(null, null, href);
-		this.route();
-	}
-	async route() {
-		const routes = [
-			{
-				path: "/",
-				view: () => console.log("/")
-			},
-			{
-				path: "/data",
-				view: () => console.log("/data")
-			},
-			{
-				path: "/pay",
-				view: () => console.log("/pay")
-			},
-			{
-				path: "/schedule",
-				view: () => console.log("/schedule")
-			},
-			{
-				path: "/plan",
-				view: () => console.log("/plan")
-			},
-			{
-				path: "/settings",
-				view: () => console.log("/settings")
-			}
-		];
-		const activeWindow = routes.map((route) => {
-			return {
-				route: route,
-				isActive: route.path === location.pathname
-			};
-		});
-		let searchLink = activeWindow.find((item) => item.isActive);
-		if (!searchLink) searchLink = { route: routes[0], isActive: true };
-		searchLink.route.view();
-	}
 	createLink(ref, inner, classAdd) {
 		const link = document.createElement("a");
 		link.setAttribute("href", ref);
@@ -52,30 +11,23 @@ export class Aside {
 		link.classList.add(classAdd);
 		return link;
 	}
-	routeToPage(e) {
-		if (e.target.matches("[data-link]")) {
-			e.preventDefault();
-			this.changeHref(e.target.href);
-		}
-	}
 	render() {
 		const wrap = document.createElement("div");
 		wrap.classList.add("aside");
-		wrap.addEventListener("click", (e) => this.routeToPage(e));
-
 		const title = document.createElement("h1");
-
 		title.classList.add("main-title");
-
 		const exit = document.createElement("button");
 		exit.classList.add("exit-button");
+
 		const span = document.createElement("span");
+		exit.addEventListener("click", (e) => {
+			localStorage.removeItem("id");
+			this.el.dispatchEvent(new CustomEvent("exit", { bubbles: true }));
+		});
 		exit.innerText = "Exit";
 		exit.prepend(span);
-
 		const nav = document.createElement("nav");
 		nav.className = "aside__menu menu";
-		wrap.append(title, nav, exit);
 		nav.append(
 			this.createLink("/", "Home", "link-home"),
 			this.createLink("/data", "Data", "link-data"),
@@ -84,6 +36,15 @@ export class Aside {
 			this.createLink("/plan", "Plan", "link-plan"),
 			this.createLink("/settings", "Settings", "link-settings")
 		);
+
+		const footerText = document.createElement("div");
+		footerText.classList.add("footer-text");
+		footerText.innerText = `2024 @ With love from `;
+
+		const span2 = document.createElement("span");
+		span2.innerText = "Pavlo and Anna";
+		footerText.append(span2);
+		wrap.append(title, nav, exit, footerText);
 		return wrap;
 	}
 }

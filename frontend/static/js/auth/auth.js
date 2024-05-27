@@ -19,8 +19,10 @@ export class Auth {
 		else if (flag === "remove") this[tag].nextElementSibling.classList.remove(classChange);
 	}
 	checkInput(e) {
+		let count = 2;
 		if (!this.checkEmail.checked) {
 			this.check("email", "valid", "not-valid", "Wrong email", { flag: "add" });
+			count--;
 		}
 		if (!this.checkPassword.checked) {
 			this.check(
@@ -30,7 +32,9 @@ export class Auth {
 				"The password must contain at least one capital letter, at least one number, and at least one special character",
 				{ flag: "add" }
 			);
+			count--;
 		}
+		return count;
 	}
 	validateInput(event) {
 		const type = event.target.getAttribute("type");
@@ -73,14 +77,88 @@ export class Auth {
 		wrap.append(label, this[type], result);
 		return wrap;
 	}
+	async login() {
+		try {
+			this.resultErr.innerText = "";
+			const user = {
+				email: this.email.value,
+				password: this.password.value
+			};
+			const reg = await fetch("http://localhost:4000/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(user)
+			});
+			if (reg.status === 401) {
+				const result = await reg.json();
+				this.resultErr.innerText = result.message;
+				return;
+			}
+			if (reg.ok) {
+				const result = await reg.json();
+				localStorage.setItem("id", result.id);
+				this.el.dispatchEvent(
+					new CustomEvent("register", {
+						bubbles: true
+					})
+				);
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
+	}
+	async register() {
+		try {
+			this.resultErr.innerText = "";
+			const user = {
+				email: this.email.value,
+				password: this.password.value
+			};
+			const reg = await fetch("http://localhost:4000/registr", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(user)
+			});
+			if (reg.status === 401) {
+				const result = await reg.json();
+				this.resultErr.innerText = result.message;
+				return;
+			}
+			if (reg.ok) {
+				const result = await reg.json();
+				localStorage.setItem("id", result.id);
+				this.el.dispatchEvent(
+					new CustomEvent("register", {
+						bubbles: true
+					})
+				);
+			}
+		} catch (error) {
+			alert(error.message);
+			this.resultErr.innerText = error.message;
+		}
+	}
 	createButtons() {
 		const wrapButtons = document.createElement("div");
 		wrapButtons.className = "buttons-wrapper";
 		this.buttonLogin = document.createElement("button");
-		this.buttonLogin.addEventListener("click", (e) => this.checkInput(e));
+		this.buttonLogin.addEventListener("click", async (e) => {
+			if (this.checkInput(e) === 2) await this.login();
+		});
+
 		this.buttonLogin.innerText = "Login";
 		this.buttonRegistr = document.createElement("button");
-		this.buttonRegistr.addEventListener("click", (e) => this.checkInput(e));
+		this.buttonRegistr.addEventListener("click", async (e) => {
+			try {
+				if (this.checkInput(e) === 2) await this.register();
+			} catch (error) {
+				console.log(error.message);
+			}
+		});
 		this.buttonRegistr.innerText = "Registration";
 		wrapButtons.append(this.buttonLogin, this.buttonRegistr);
 		return wrapButtons;
@@ -92,7 +170,10 @@ export class Auth {
 		container.append(wrap);
 		const title = document.createElement("h2");
 		title.innerText = this.title;
-		wrap.append(title, this.createInput("Email", "email"), this.createInput("Password", "password"), this.createButtons());
+
+		this.resultErr = document.createElement("p");
+		this.resultErr.classList.add("result-err");
+		wrap.append(title, this.createInput("Email", "email"), this.createInput("Password", "password"), this.resultErr, this.createButtons());
 		return container;
 	}
 }
