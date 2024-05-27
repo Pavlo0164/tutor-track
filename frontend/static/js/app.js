@@ -89,9 +89,6 @@ class App {
 		const id = localStorage.getItem("id");
 		if (!id) this.changeHref("/auth");
 		else this.changeHref("/");
-
-		this.auth.email.value = "";
-		this.auth.checkPassword.value = "";
 	}
 	changePage(elem) {
 		if (this.body.firstElementChild) this.body.firstElementChild.remove();
