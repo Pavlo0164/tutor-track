@@ -1,5 +1,6 @@
 import { Auth } from "./auth/auth.js";
 import { Main } from "./main/main.js";
+import { DataPage } from "./data-page/data-page.js";
 class App {
 	constructor() {
 		this.auth = new Auth();
@@ -49,7 +50,16 @@ class App {
 			},
 			{
 				path: "/data",
-				view: () => this.changeTitle("/data")
+				view: () => {
+					//const data = new DataPage()
+					const childrenMain =Array.from(this.main.mainContent.children) 
+					let elWithDataAttr = childrenMain.find(item=>
+						item.hasAttribute('data-content')
+					)
+					console.log(elWithDataAttr);
+					this.changeTitle("/data")
+
+				}
 			},
 			{
 				path: "/pay",
