@@ -11,7 +11,7 @@ export class Auth {
 		};
 		this.el = this.render();
 	}
-	check(tag, removeClassValid, addClassValid, text, { classChange = "result-input", flag = "add" }) {
+	check(tag, removeClassValid, addClassValid, text, { flag = "add", classChange = "result-input" }) {
 		this[tag].classList.remove(removeClassValid);
 		this[tag].classList.add(addClassValid);
 		this[tag].nextElementSibling.innerText = text;
@@ -20,11 +20,13 @@ export class Auth {
 	}
 	checkInput(e) {
 		let count = 2;
-		if (!this.checkEmail.checked) {
+		if (this.checkEmail.checked) this.check("email", "not-valid", "valid", "", { flag: "remove" });
+		else {
 			this.check("email", "valid", "not-valid", "Wrong email", { flag: "add" });
 			count--;
 		}
-		if (!this.checkPassword.checked) {
+		if (this.checkPassword.checked) this.check("password", "not-valid", "valid", "", { flag: "remove" });
+		else {
 			this.check(
 				"password",
 				"valid",
@@ -34,6 +36,7 @@ export class Auth {
 			);
 			count--;
 		}
+
 		return count;
 	}
 	validateInput(event) {
@@ -131,14 +134,20 @@ export class Auth {
 		wrapButtons.className = "buttons-wrapper";
 		this.buttonLogin = document.createElement("button");
 		this.buttonLogin.addEventListener("click", async (e) => {
-			if (this.checkInput(e) === 2) await this.login();
+			try {
+				this.validateInput(e);
+				const resValidate = this.checkInput(e);
+				if (resValidate === 2) await this.login();
+			} catch (error) {}
 		});
 
 		this.buttonLogin.innerText = "Login";
 		this.buttonRegistr = document.createElement("button");
 		this.buttonRegistr.addEventListener("click", async (e) => {
 			try {
-				if (this.checkInput(e) === 2) await this.register();
+				this.validateInput(e);
+				const resValidate = this.checkInput(e);
+				if (resValidate === 2) await this.register();
 			} catch (error) {
 				console.log(error.message);
 			}
