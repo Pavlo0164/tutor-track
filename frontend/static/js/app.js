@@ -1,122 +1,143 @@
-import { Auth } from "./auth/auth.js";
-import { Main } from "./main/main.js";
-import { DataPage } from "./data-page/data-page.js";
+import { Auth } from "./auth/auth.js"
+import { Main } from "./main/main.js"
+import { Data } from "./pages/data-page/data-page.js"
+import { Home } from "./pages/home/home.js"
+import { Pay } from "./pages/pay/pay.js"
+import { Plan } from "./pages/plan/plan.js"
+import { Schedule } from "./pages/schedule/schedule.js"
+import { Settings } from "./pages/settings/settings.js"
 class App {
 	constructor() {
-		this.auth = new Auth();
-		this.main = new Main();
-		this.body = document.body;
-		this.work();
+		this.auth = new Auth()
+		this.main = new Main()
+		this.body = document.body
+		this.work()
 	}
 	async updateUserInfo() {
 		try {
-			const res = await fetch("https://jsonplaceholder.typicode.com/users");
+			const res = await fetch("https://jsonplaceholder.typicode.com/users")
 			if (res.ok) {
-				const users = await res.json();
-				this.main.header.changeUserName(users[0].username);
-				this.main.header.changeUserEmail(users[0].email);
+				const users = await res.json()
+				this.main.header.changeUserName(users[0].username)
+				this.main.header.changeUserEmail(users[0].email)
 			}
 		} catch (error) {
-			console.log(error.message);
+			console.log(error.message)
 		}
 	}
 
 	changeTitle(path) {
-		const newTitle = path.slice(1);
-		if (newTitle.length === 0) this.main.header.changeTitle("Home");
+		const newTitle = path.slice(1)
+		if (newTitle.length === 0) this.main.header.changeTitle("Home")
 		else {
-			const titleUpdate = newTitle[0].toUpperCase() + newTitle.slice(1);
-			this.main.header.changeTitle(titleUpdate);
+			const titleUpdate = newTitle[0].toUpperCase() + newTitle.slice(1)
+			this.main.header.changeTitle(titleUpdate)
 		}
 	}
 	routeToPage(e) {
 		if (e.target.matches("[data-link]")) {
-			e.preventDefault();
-			this.changeHref(e.target.href);
+			e.preventDefault()
+			this.changeHref(e.target.href)
 		}
 	}
 	changeHref(href) {
-		history.pushState(null, null, href);
-		this.route();
+		history.pushState(null, null, href)
+		this.route()
+	}
+	changeContent(classPage) {
+		const pageEl = new classPage()
+		const children = Array.from(this.main.mainContent.children)
+		const elWithAttrData = children.find((item) =>
+			item.hasAttribute("data-content")
+		)
+		if (elWithAttrData) elWithAttrData.remove()
+		this.main.mainContent.append(pageEl.el)
 	}
 	route() {
 		const routes = [
 			{
 				path: "/",
 				view: () => {
-					this.changePage(this.main.el);
-					this.changeTitle("/");
-				}
+					this.changeContent(Home)
+					this.changePage(this.main.el)
+					this.changeTitle("/")
+				},
 			},
 			{
 				path: "/data",
 				view: () => {
-					//const data = new DataPage()
-					const childrenMain =Array.from(this.main.mainContent.children) 
-					let elWithDataAttr = childrenMain.find(item=>
-						item.hasAttribute('data-content')
-					)
-					console.log(elWithDataAttr);
+					this.changeContent(Data)
 					this.changeTitle("/data")
-
-				}
+				},
 			},
 			{
 				path: "/pay",
-				view: () => this.changeTitle("/pay")
+				view: () => {
+					this.changeTitle("/pay")
+					this.changeContent(Pay)
+				},
 			},
 			{
 				path: "/schedule",
-				view: () => this.changeTitle("/schedule")
+				view: () => {
+					this.changeContent(Schedule)
+					this.changeTitle("/schedule")
+				},
 			},
 			{
 				path: "/plan",
-				view: () => this.changeTitle("/plan")
+				view: () => {
+					this.changeContent(Plan)
+					this.changeTitle("/plan")
+				},
 			},
 			{
 				path: "/settings",
-				view: () => this.changeTitle("/settings")
+				view: () => {
+					this.changeContent(Settings)
+					this.changeTitle("/settings")
+				},
 			},
 			{
 				path: "/auth",
 				view: () => {
-					this.changePage(this.auth.el);
-				}
-			}
-		];
+					this.changePage(this.auth.el)
+				},
+			},
+		]
 		const activeWindow = routes.map((route) => {
 			return {
 				route: route,
-				isActive: route.path === location.pathname
-			};
-		});
-		let searchLink = activeWindow.find((item) => item.isActive);
-		if (!searchLink) searchLink = { route: routes[0], isActive: true };
-		searchLink.route.view();
+				isActive: route.path === location.pathname,
+			}
+		})
+		let searchLink = activeWindow.find((item) => item.isActive)
+		if (!searchLink) searchLink = { route: routes[0], isActive: true }
+		searchLink.route.view()
 	}
 
 	checkAuth() {
-		const id = localStorage.getItem("id");
-		if (!id) this.changeHref("/auth");
-		else this.changeHref("/");
+		const id = localStorage.getItem("id")
+		if (!id) this.changeHref("/auth")
+		else this.changeHref("/")
 	}
 	changePage(elem) {
-		if (this.body.firstElementChild) this.body.firstElementChild.remove();
-		this.body.append(elem);
+		if (this.body.firstElementChild) this.body.firstElementChild.remove()
+		this.body.append(elem)
 	}
 	async work() {
-		this.body.addEventListener("register", () => this.checkAuth());
+		this.body.addEventListener("register", () => this.checkAuth())
 		this.body.addEventListener("exit", () => {
-			this.auth.password.value = "";
-			this.auth.email.value = "";
-			this.checkAuth();
-		});
-		this.checkAuth();
-		this.route();
-		await this.updateUserInfo();
-		this.body.addEventListener("click", (e) => this.routeToPage(e));
-		window.addEventListener("popstate", (e) => this.checkAuth());
+			this.auth.password.value = ""
+			this.auth.email.value = ""
+			this.checkAuth()
+		})
+		this.checkAuth()
+		this.route()
+		await this.updateUserInfo()
+		this.body.addEventListener("click", (e) => this.routeToPage(e))
+		window.addEventListener("popstate", (e) => this.checkAuth())
 	}
 }
 
-const app = new App();
+const app = new App()
