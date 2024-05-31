@@ -6,10 +6,12 @@ import { Pay } from "./pages/pay/pay.js"
 import { Plan } from "./pages/plan/plan.js"
 import { Schedule } from "./pages/schedule/schedule.js"
 import { Settings } from "./pages/settings/settings.js"
+
 class App {
 	constructor() {
 		this.auth = new Auth()
 		this.main = new Main()
+
 		this.body = document.body
 		this.work()
 	}
@@ -22,7 +24,7 @@ class App {
 				this.main.header.changeUserEmail(users[0].email)
 			}
 		} catch (error) {
-			console.log(error.message)
+			alert(error.message)
 		}
 	}
 
@@ -134,9 +136,9 @@ class App {
 		})
 		this.checkAuth()
 		this.route()
-		await this.updateUserInfo()
 		this.body.addEventListener("click", (e) => this.routeToPage(e))
-		window.addEventListener("popstate", (e) => this.checkAuth())
+		window.addEventListener("popstate", () => this.route())
+		await this.updateUserInfo()
 	}
 }
 

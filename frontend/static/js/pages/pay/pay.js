@@ -1,3 +1,4 @@
+//import { Users } from "../users-coll/users"
 export class Pay {
 	constructor() {
 		this.el = this.render()
