@@ -5,9 +5,7 @@ const bcrypt = require("bcryptjs")
 const uuid = require("uuid")
 const app = express()
 app.use(bodyParser.json())
-app.use(
-	express.static(path.resolve(__dirname, "frontend", "static", "index.html"))
-)
+app.use(express.static(path.resolve(__dirname, "frontend")))
 const users = []
 app.post("/registr", async (req, res) => {
 	try {

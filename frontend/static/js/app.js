@@ -39,11 +39,12 @@ class App {
 	routeToPage(e) {
 		if (e.target.matches("[data-link]")) {
 			e.preventDefault()
-			this.changeHref(e.target.href)
+			this.changeHref(e.target.getAttribute("href"))
 		}
 	}
 	changeHref(href) {
 		history.pushState(null, null, href)
+		localStorage.setItem("current-url", href)
 		this.route()
 	}
 	changeContent(classPage) {
@@ -68,6 +69,7 @@ class App {
 			{
 				path: "/data",
 				view: () => {
+					this.changePage(this.main.el)
 					this.changeContent(Data)
 					this.changeTitle("/data")
 				},
@@ -75,6 +77,7 @@ class App {
 			{
 				path: "/pay",
 				view: () => {
+					this.changePage(this.main.el)
 					this.changeTitle("/pay")
 					this.changeContent(Pay)
 				},
@@ -82,6 +85,7 @@ class App {
 			{
 				path: "/schedule",
 				view: () => {
+					this.changePage(this.main.el)
 					this.changeContent(Schedule)
 					this.changeTitle("/schedule")
 				},
@@ -89,6 +93,7 @@ class App {
 			{
 				path: "/plan",
 				view: () => {
+					this.changePage(this.main.el)
 					this.changeContent(Plan)
 					this.changeTitle("/plan")
 				},
@@ -96,6 +101,7 @@ class App {
 			{
 				path: "/settings",
 				view: () => {
+					this.changePage(this.main.el)
 					this.changeContent(Settings)
 					this.changeTitle("/settings")
 				},
@@ -120,22 +126,37 @@ class App {
 
 	checkAuth() {
 		const id = localStorage.getItem("id")
-		if (!id) this.changeHref("/auth")
-		else this.changeHref("/")
+		
+		if (!id) 
+			this.changeHref("/auth")
+		
+		
+		else {
+			if (localStorage.getItem("current-url")) 
+			this.changeHref(localStorage.getItem("current-url"))
+			
+			else this.changeHref("/")
+		}
 	}
 	changePage(elem) {
 		if (this.body.firstElementChild) this.body.firstElementChild.remove()
 		this.body.append(elem)
 	}
 	async work() {
+		this.checkAuth()
+
+		if (localStorage.getItem("current-url")) {
+			this.changeHref(localStorage.getItem("current-url"))
+			console.log(true)
+		}
+
+		this.route()
 		this.body.addEventListener("register", () => this.checkAuth())
 		this.body.addEventListener("exit", () => {
 			this.auth.password.value = ""
 			this.auth.email.value = ""
 			this.checkAuth()
 		})
-		this.checkAuth()
-		this.route()
 		this.body.addEventListener("click", (e) => this.routeToPage(e))
 		window.addEventListener("popstate", () => this.route())
 		await this.updateUserInfo()

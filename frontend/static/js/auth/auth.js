@@ -67,7 +67,7 @@ export class Auth {
 		const wrap = document.createElement("div")
 		wrap.classList.add("input-wrapper")
 		const label = document.createElement("label")
-		label.setAttribute("for", "name")
+		label.setAttribute("for", type)
 		label.innerText = labelInner
 		this[type] = document.createElement("input")
 		this[type].type = type

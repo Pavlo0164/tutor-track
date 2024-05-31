@@ -1,4 +1,4 @@
-//import { Users } from "../users/users"
+import Users from "../users/users.js"
 export class Data {
 	constructor() {
 		this.el = this.render()
@@ -6,7 +6,7 @@ export class Data {
 
 	render() {
 		const wrap = document.createElement("div")
-		wrap.innerText = "Data"
+		wrap.classList.add('users-content')
 		wrap.append(new Users().el)
 		wrap.setAttribute("data-content", "")
 		return wrap
