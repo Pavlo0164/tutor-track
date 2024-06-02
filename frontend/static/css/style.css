@@ -376,11 +376,46 @@ span.result-input {
 }
 
 .users-block {
-  padding: 10px;
-  background-color: #7b7c81;
+  min-height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  overflow-y: auto;
+  border-right: 1px solid #7b7c81;
+  padding: 5px;
+}
+
+.check-stud {
+  padding: 5px;
+  background-color: #7B586B;
 }
 
 .users-content {
+  height: 100%;
   display: grid;
   grid-template-columns: 250px 1fr;
+}
+
+.button-add-student {
+  text-transform: capitalize;
+  border: 1px solid #7b7c81;
+  padding: 5px 10px;
+  font-weight: 500;
+}
+
+.input-add-stud {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.input-add-stud input {
+  padding: 5px 10px;
+  border: 1px solid #7b7c81;
+}
+.input-add-stud input:focus {
+  outline: none;
 }

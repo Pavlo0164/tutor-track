@@ -23,9 +23,7 @@ class App {
 				this.main.header.changeUserName(users[0].username)
 				this.main.header.changeUserEmail(users[0].email)
 			}
-		} catch (error) {
-			alert(error.message)
-		}
+		} catch (error) {}
 	}
 
 	changeTitle(path) {
@@ -38,13 +36,14 @@ class App {
 	}
 	routeToPage(e) {
 		if (e.target.matches("[data-link]")) {
+			const href = e.target.getAttribute("href")
 			e.preventDefault()
-			this.changeHref(e.target.getAttribute("href"))
+			this.changeHref(href)
 		}
 	}
-	changeHref(href) {
+	changeHref(href, flag = true) {
 		history.pushState(null, null, href)
-		localStorage.setItem("current-url", href)
+		if (flag) sessionStorage.setItem("current-url", href)
 		this.route()
 	}
 	changeContent(classPage) {
@@ -125,18 +124,40 @@ class App {
 	}
 
 	checkAuth() {
+		const pathUrl = location.pathname
 		const id = localStorage.getItem("id")
-		
-		if (!id) 
-			this.changeHref("/auth")
-		
-		
-		else {
-			if (localStorage.getItem("current-url")) 
-			this.changeHref(localStorage.getItem("current-url"))
-			
-			else this.changeHref("/")
-		}
+		if (pathUrl === "/auth" && !id) this.changeHref("/auth")
+		else if (pathUrl === "/auth" && id) this.changeHref("/")
+		else if (pathUrl === "/") {
+			if (!id) this.changeHref("/auth")
+			else {
+				let currentUrl = sessionStorage.getItem("current-url")
+				if (currentUrl && currentUrl !== "/auth")
+					this.changeHref(currentUrl, false)
+				else this.changeHref("/")
+			}
+		} else if (id) {
+			switch (pathUrl) {
+				case "/data":
+					this.changeHref("/data")
+					break
+				case "/pay":
+					this.changeHref("/pay")
+					break
+				case "/settings":
+					this.changeHref("/settings")
+					break
+				case "/schedule":
+					this.changeHref("/schedule")
+					break
+				case "/plan":
+					this.changeHref("/plan")
+					break
+				default:
+					this.changeHref("/")
+					break
+			}
+		} else this.changeHref("/auth")
 	}
 	changePage(elem) {
 		if (this.body.firstElementChild) this.body.firstElementChild.remove()
@@ -144,13 +165,6 @@ class App {
 	}
 	async work() {
 		this.checkAuth()
-
-		if (localStorage.getItem("current-url")) {
-			this.changeHref(localStorage.getItem("current-url"))
-			console.log(true)
-		}
-
-		this.route()
 		this.body.addEventListener("register", () => this.checkAuth())
 		this.body.addEventListener("exit", () => {
 			this.auth.password.value = ""
@@ -158,7 +172,10 @@ class App {
 			this.checkAuth()
 		})
 		this.body.addEventListener("click", (e) => this.routeToPage(e))
-		window.addEventListener("popstate", () => this.route())
+		window.addEventListener("popstate", (e) => {
+			sessionStorage.setItem("current-url", location.pathname)
+			this.route()
+		})
 		await this.updateUserInfo()
 	}
 }
