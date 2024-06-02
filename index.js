@@ -52,10 +52,10 @@ app.post("/addstud", async (req, res) => {
 app.get("/students", async (req, res) => {
 	const { auth } = req.headers
 	const searchId = users.find((item) => item.id === auth)
-	if (!searchId) return res.status(401).json({ message: "Wrong ID" })
+	if (!searchId) return res.status(201).json({ message: "Wrong ID" })
 	const student = students.filter((item) => item.id === auth)
 	if (student.length === 0)
-		return res.status(401).json({ message: "You do not have any student" })
+		return res.status(201).json({ message: "You do not have any student" })
 	res.status(200).json({ students: student })
 })
 app.post("/login", async (req, res) => {

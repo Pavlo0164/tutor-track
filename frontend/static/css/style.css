@@ -391,7 +391,7 @@ span.result-input {
 
 .check-stud {
   padding: 5px;
-  background-color: #7B586B;
+  background-color: #7b586b;
 }
 
 .users-content {
@@ -400,11 +400,19 @@ span.result-input {
   grid-template-columns: 250px 1fr;
 }
 
-.button-add-student {
+.button-add-student,
+.button-cancel-add-student {
   text-transform: capitalize;
   border: 1px solid #7b7c81;
   padding: 5px 10px;
   font-weight: 500;
+}
+
+.wrap-buttons-stud {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 5px;
 }
 
 .input-add-stud {
@@ -418,4 +426,18 @@ span.result-input {
 }
 .input-add-stud input:focus {
   outline: none;
+}
+
+.one-stud {
+  padding: 10px;
+  font-size: 20px;
+  background-color: #5f6062;
+  font-weight: 500;
+  letter-spacing: 1px;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.one-stud:hover {
+  background-color: #424344;
 }

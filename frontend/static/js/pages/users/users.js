@@ -18,11 +18,15 @@ export default class Users {
 				const arrStud = students.students
 				const children = Array.from(this.allStudents.children)
 				if (children.length !== 0) children.forEach((item) => item.remove())
-				arrStud.forEach((item) => {
-					const stud = document.createElement("div")
-					stud.innerText = item.name
-					this.allStudents.append(stud)
-				})
+				if (Array.isArray(arrStud)) {
+					arrStud.forEach((item) => {
+						const stud = document.createElement("div")
+						stud.classList.add("one-stud")
+						stud.innerText = item.name
+						this.allStudents.append(stud)
+					})
+					this.allStudents.style.marginBottom = "10px"
+				}
 			} else {
 				console.log(students)
 			}
@@ -61,7 +65,6 @@ export default class Users {
 		this.input = document.createElement("input")
 		this.input.placeholder = "Enter student full name"
 		const button = document.createElement("button")
-
 		button.addEventListener("click", async () => {
 			try {
 				await this.createNewStudents()
@@ -75,19 +78,24 @@ export default class Users {
 		inputWrap.append(this.input, button)
 		return inputWrap
 	}
-	createBtnAddStud() {
+	eventAddStud() {
+		if (!this.inputAlive) {
+			this.inputAlive = true
+			const input = this.createInputAddStud()
+			this.wrapInputAddStud.append(input)
+			input.style.marginBottom = "5px"
+		}
+	}
+	eventCanselAddStud() {
+		if (this.inputAlive) this.input.parentElement.remove()
+		this.inputAlive = false
+	}
+	createBtnAddStud(eventNow, addClass, inner) {
 		const wrapButton = document.createElement("div")
 		const button = document.createElement("button")
-		button.innerText = "Add student"
-		button.addEventListener("click", (e) => {
-			if (!this.inputAlive) {
-				this.inputAlive = true
-				const input = this.createInputAddStud()
-				this.wrapInputAddStud.append(input)
-				input.style.marginBottom = "5px"
-			}
-		})
-		button.classList.add("button-add-student")
+		button.innerText = inner
+		button.addEventListener("click", eventNow.bind(this))
+		button.classList.add(addClass)
 		wrapButton.append(button)
 		return wrapButton
 	}
@@ -100,11 +108,20 @@ export default class Users {
 		this.wrapInputAddStud = document.createElement("div")
 		this.allStudents = document.createElement("div")
 		this.allStudents.classList.add("wrap-students")
-		wrap.append(
-			this.wrapInputAddStud,
-			this.allStudents,
-			this.createBtnAddStud()
+		const wrapButtons = document.createElement("div")
+		const btnAdd = this.createBtnAddStud(
+			this.eventAddStud,
+			"button-add-student",
+			"Add student"
 		)
+		const btnCancel = this.createBtnAddStud(
+			this.eventCanselAddStud,
+			"button-cancel-add-student",
+			"Cancel"
+		)
+		wrapButtons.append(btnAdd, btnCancel)
+		wrapButtons.classList.add("wrap-buttons-stud")
+		wrap.append(this.wrapInputAddStud, this.allStudents, wrapButtons)
 		this.updateStude()
 		return wrap
 	}
