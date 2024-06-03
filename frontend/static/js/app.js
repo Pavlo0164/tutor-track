@@ -6,7 +6,6 @@ import { Pay } from "./pages/pay/pay.js"
 import { Plan } from "./pages/plan/plan.js"
 import { Schedule } from "./pages/schedule/schedule.js"
 import { Settings } from "./pages/settings/settings.js"
-
 class App {
 	constructor() {
 		this.auth = new Auth()
@@ -179,5 +178,4 @@ class App {
 		await this.updateUserInfo()
 	}
 }
-
 const app = new App()
