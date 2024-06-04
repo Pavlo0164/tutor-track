@@ -85,7 +85,7 @@ export class Auth {
 				email: this.email.value,
 				password: this.password.value,
 			}
-			const reg = await fetch("http://localhost:4000/login", {
+			const reg = await fetch("http://localhost:4001/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -117,7 +117,7 @@ export class Auth {
 				email: this.email.value,
 				password: this.password.value,
 			}
-			const reg = await fetch("http://localhost:4000/registr", {
+			const reg = await fetch("http://localhost:4001/registr", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

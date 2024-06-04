@@ -16,15 +16,19 @@ class App {
 	}
 	async updateUserInfo() {
 		try {
-			const res = await fetch("https://jsonplaceholder.typicode.com/users")
+			const res = await fetch("http://localhost:4001/email", {
+				method: "GET",
+				headers: {
+					id: localStorage.getItem("id"),
+				},
+			})
 			if (res.ok) {
-				const users = await res.json()
-				this.main.header.changeUserName(users[0].username)
-				this.main.header.changeUserEmail(users[0].email)
+				const body = await res.json()
+				if (body.name) this.main.header.changeUserName(body.name)
+				this.main.header.changeUserEmail(body.email)
 			}
 		} catch (error) {}
 	}
-
 	changeTitle(path) {
 		const newTitle = path.slice(1)
 		if (newTitle.length === 0) this.main.header.changeTitle("Home")
@@ -121,7 +125,6 @@ class App {
 		if (!searchLink) searchLink = { route: routes[0], isActive: true }
 		searchLink.route.view()
 	}
-
 	checkAuth() {
 		const pathUrl = location.pathname
 		const id = localStorage.getItem("id")

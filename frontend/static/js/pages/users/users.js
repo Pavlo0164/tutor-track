@@ -7,38 +7,33 @@ export default class Users {
 	async updateShowStudents() {
 		try {
 			const id = localStorage.getItem("id")
-			const response = await fetch("http://localhost:4000/students", {
+			const response = await fetch("http://localhost:4001/student", {
 				method: "GET",
 				headers: {
 					auth: id,
 				},
 			})
-			const students = await response.json()
-			if (response.ok) {
-				const arrStud = students.students
-				const children = Array.from(this.allStudents.children)
-				if (children.length !== 0) children.forEach((item) => item.remove())
-				if (Array.isArray(arrStud)) {
-					arrStud.forEach((item) => {
-						const stud = document.createElement("div")
-						stud.classList.add("one-stud")
-						stud.innerText = item.name
-						this.allStudents.append(stud)
-					})
-					this.allStudents.style.marginBottom = "10px"
-				}
-			} else {
-				console.log(students)
-			}
+			const body = await response.json()
+			const students = body.students
+			if (!response.ok) return
+			const children = Array.from(this.allStudents.children)
+			if (children.length !== 0) children.forEach((item) => item.remove())
+			students.forEach((item) => {
+				const stud = document.createElement("div")
+				stud.classList.add("one-stud")
+				stud.innerText = item.name
+				this.allStudents.append(stud)
+			})
+			this.allStudents.style.marginBottom = "10px"
 		} catch (error) {
-			console.log(error.message)
+			console.log(error)
 		}
 	}
 	async createNewStudents() {
 		if (this.regExpCheckName.test(this.input.value)) {
 			try {
 				const id = localStorage.getItem("id")
-				const res = await fetch("http://localhost:4000/addstud", {
+				const res = await fetch("http://localhost:4001/addstud", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -47,13 +42,10 @@ export default class Users {
 					}),
 				})
 				const result = await res.json()
-				if (res.ok) {
-					this.input.parentElement.remove()
-					this.inputAlive = false
-					await this.updateShowStudents()
-				} else {
-					alert(result.message)
-				}
+				if (!res.ok) console.log(result.message)
+				this.input.parentElement.remove()
+				this.inputAlive = false
+				await this.updateShowStudents()
 			} catch (error) {
 				alert(error.message)
 			}
