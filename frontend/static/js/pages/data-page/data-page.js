@@ -1,6 +1,6 @@
 import Users from "../users/users.js";
 import UserData from "./users-data.js";
-export default class Data {
+export  class Data {
   constructor() {
     this.el = this.render();
   }

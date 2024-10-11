@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
@@ -13,7 +14,7 @@ mongoose
   .connect(uri)
   .then(() => console.log("Connected to MongoDB Atlas with Mongoose"))
   .catch((err) => console.error("Failed to connect to MongoDB Atlas", err));
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.resolve(__dirname, "frontend")));
 app.post("/registr", async (req, res) => {
@@ -54,7 +55,9 @@ app.post("/login", async (req, res) => {
     const searchUser = await Teacher.findOne({ email: email });
     if (!searchUser)
       return res.status(401).json({ message: "Username not exists" });
-    const checkPassword = bcrypt.compare(password, searchUser.password);
+    const checkPassword = await bcrypt.compare(password, searchUser.password);
+    console.log(checkPassword);
+
     if (!checkPassword)
       return res.status(401).json({ message: "Wrong password" });
     res.status(201).json({
