@@ -1,13 +1,27 @@
+import { URL } from "../../config/config.js";
 export default class Users {
   constructor() {
     this.inputAlive = false;
     this.regExpCheckName = /^[a-zA-Zà-žÀ-ŽА-Яа-яЁёЇїІіЄєҐґ' -]+$/;
     this.el = this.render();
   }
+  activeStudent(e) {
+    const allStud = document.querySelectorAll(".one-stud");
+    allStud.forEach((el) => {
+      el.classList.remove("active-stude");
+    });
+    e.target.classList.add("active-stude");
+
+    const eventMy = new CustomEvent("checkUserData", {
+      detail: { _id: e.target.getAttribute("data-id") },
+      bubbles: true,
+    });
+    e.target.dispatchEvent(eventMy);
+  }
   async updateShowStudents() {
     try {
       const id = localStorage.getItem("id");
-      const response = await fetch("http://localhost:4001/student", {
+      const response = await fetch(URL + "/student", {
         method: "GET",
         headers: {
           auth: id,
@@ -15,16 +29,20 @@ export default class Users {
       });
       const body = await response.json();
       const students = body.students;
-      if (!response.ok) return;
+      if (!response.ok)
+        throw new Error(`Error : ${response.status} ${response.statusText}`);
       const children = Array.from(this.allStudents.children);
+      //remove the previous students in HTML
       if (children.length !== 0) children.forEach((item) => item.remove());
+
       students.forEach((item) => {
         const stud = document.createElement("div");
         stud.classList.add("one-stud");
+        stud.setAttribute("data-id", item._id);
         stud.innerText = item.name;
         this.allStudents.append(stud);
+        stud.addEventListener("click", this.activeStudent.bind(this));
       });
-      this.allStudents.style.marginBottom = "10px";
     } catch (error) {
       console.log(error);
     }
@@ -33,7 +51,7 @@ export default class Users {
     if (this.regExpCheckName.test(this.input.value)) {
       try {
         const id = localStorage.getItem("id");
-        const res = await fetch("http://localhost:4001/addstud", {
+        const res = await fetch(URL + "/addstud", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

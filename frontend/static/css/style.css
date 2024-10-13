@@ -358,4 +358,16 @@ span.result-input {
 }
 .one-stud:hover {
   background-color: #424344;
+}
+
+.users-info {
+  padding: 8px;
+}
+
+.one-stud.active-stude {
+  background-color: #3b1f1f;
+}
+
+.wrap-students {
+  margin-bottom: 10px;
 }/*# sourceMappingURL=style.css.map */

@@ -7,11 +7,12 @@ const uuid = require("uuid");
 const app = express();
 const mongoose = require("mongoose");
 const Teacher = require("./dbTeacher.js");
+require("dotenv").config();
 
-const uri =
-  "mongodb+srv://Pavlik2294:Klarnetist_0164@tutor-track.o8r5c4j.mongodb.net/tutor-track";
+const URI = process.env.DATABASE_URL;
+const PORT = process.env.PORT || 4001;
 mongoose
-  .connect(uri)
+  .connect(URI)
   .then(() => console.log("Connected to MongoDB Atlas with Mongoose"))
   .catch((err) => console.error("Failed to connect to MongoDB Atlas", err));
 app.use(cors());
@@ -20,7 +21,7 @@ app.use(express.static(path.resolve(__dirname, "frontend")));
 app.post("/registr", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(email);
+
     if (!email || !password)
       return res
         .status(401)
@@ -44,6 +45,30 @@ app.post("/registr", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+app.get("/checkId", async (req, res) => {
+  try {
+    const id = req.headers.id;
+    const aliveId = await Teacher.findOne({ id: id });
+    if (id === aliveId.id) {
+      res.status(201).json({ status: true });
+    } else {
+      res.status(404).json({ message: "User not exist" });
+    }
+  } catch {}
+});
+app.get("/userInfo", async (req, res) => {
+  try {
+    const { id, userId } = req.headers;
+    
+    const check = await Teacher.findOne({ id: id });
+   
+
+    if (!check) res.status(404).json({ message: "Teacher does not exist" });
+    const student = check.students.find((el) => el._id === userId);
+    if (!student) res.status(404).json({ message: "Student does not exist" });
+    res.status(201).json({ student: student });
+  } catch {}
+});
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -51,13 +76,10 @@ app.post("/login", async (req, res) => {
       return res
         .status(401)
         .json({ message: "Username and password are required" });
-
     const searchUser = await Teacher.findOne({ email: email });
     if (!searchUser)
       return res.status(401).json({ message: "Username not exists" });
     const checkPassword = await bcrypt.compare(password, searchUser.password);
-    console.log(checkPassword);
-
     if (!checkPassword)
       return res.status(401).json({ message: "Wrong password" });
     res.status(201).json({
@@ -109,7 +131,5 @@ app.get("/email", async (req, res) => {
   else
     res.status(200).json({ email: teacher.email, name: teacher.name ?? null });
 });
-// app.get("/*", (req, res) => {
-//   res.sendFile(path.resolve("frontend", "index.html"));
-// });
-app.listen(4001, () => console.log("Server started...."));
+
+app.listen(PORT, () => console.log("Server started...."));
