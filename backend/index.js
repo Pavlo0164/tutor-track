@@ -17,7 +17,7 @@ mongoose
   .catch((err) => console.error("Failed to connect to MongoDB Atlas", err));
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.resolve(__dirname, "frontend")));
+
 app.post("/registr", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -54,20 +54,21 @@ app.get("/checkId", async (req, res) => {
     } else {
       res.status(404).json({ message: "User not exist" });
     }
-  } catch {}
+  } catch (error) {}
 });
 app.get("/userInfo", async (req, res) => {
   try {
-    const { id, userId } = req.headers;
-    
+    const { userid, id } = req.headers;
     const check = await Teacher.findOne({ id: id });
-   
-
     if (!check) res.status(404).json({ message: "Teacher does not exist" });
-    const student = check.students.find((el) => el._id === userId);
-    if (!student) res.status(404).json({ message: "Student does not exist" });
-    res.status(201).json({ student: student });
-  } catch {}
+    else {
+      const student = check.students.find((el) => el._id.equals(userid));
+      if (!student) res.status(404).json({ message: "Student does not exist" });
+      else res.status(201).json({ student: student });
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 app.post("/login", async (req, res) => {
   try {
@@ -117,19 +118,25 @@ app.post("/addstud", async (req, res) => {
   }
 });
 app.get("/student", async (req, res) => {
-  const { auth } = req.headers;
-  const searchId = await Teacher.findOne({ id: auth });
-  const student = searchId.students;
-  if (student.length === 0)
-    return res.status(201).json({ message: "You do not have any student" });
-  else res.status(200).json({ students: [...student] });
+  try {
+    const { auth } = req.headers;
+    const searchId = await Teacher.findOne({ id: auth });
+    const student = searchId.students;
+    if (student.length === 0)
+      return res.status(201).json({ message: "You do not have any student" });
+    else res.status(200).json({ students: [...student] });
+  } catch (error) {}
 });
 app.get("/email", async (req, res) => {
-  const { id } = req.headers;
-  const teacher = await Teacher.findOne({ id: id });
-  if (!teacher) res.status(401).json({ message: "Teacher do not exist" });
-  else
-    res.status(200).json({ email: teacher.email, name: teacher.name ?? null });
+  try {
+    const { id } = req.headers;
+    const teacher = await Teacher.findOne({ id: id });
+    if (!teacher) res.status(401).json({ message: "Teacher do not exist" });
+    else
+      res
+        .status(200)
+        .json({ email: teacher.email, name: teacher.name ?? null });
+  } catch (error) {}
 });
 
 app.listen(PORT, () => console.log("Server started...."));

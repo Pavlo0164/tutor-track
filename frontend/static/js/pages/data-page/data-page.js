@@ -4,12 +4,12 @@ export class Data {
   constructor() {
     this.el = this.render();
   }
-  
-   render() {
+
+  render() {
     this.wrap = document.createElement("div");
     this.wrap.addEventListener("checkUserData", (e) => {
       const id = e.detail._id;
-      this.userData =  new UserData(true,id);
+      this.userData = new UserData(true, id);
       this.wrap.lastElementChild.remove();
       this.wrap.append(this.userData.el);
     });

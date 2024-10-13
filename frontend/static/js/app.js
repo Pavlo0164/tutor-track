@@ -22,7 +22,6 @@ class App {
         method: "GET",
         headers: {
           id: localStorage.getItem("id"),
-					
         },
       });
       if (res.ok) {
@@ -134,18 +133,23 @@ class App {
     const pathUrl = location.pathname;
     const id = localStorage.getItem("id");
     let check = true;
-    if (id) {
-      try {
-        const res = await fetch(URL + "/checkId", {
-          method: "GET",
-          headers: {
-            id: id,
-          },
-        });
-        check = res.ok;
-      } catch {
-        check = false;
+
+    try {
+      if (id) {
+        try {
+          const res = await fetch(URL + "/checkId", {
+            method: "GET",
+            headers: {
+              id: id,
+            },
+          });
+          check = res.ok;
+        } catch {
+          check = false;
+        }
       }
+    } catch (error) {
+      console.log(error.message);
     }
 
     if (pathUrl === "/auth" && !id) this.changeHref("/auth");
@@ -178,19 +182,26 @@ class App {
     this.body.append(elem);
   }
   async work() {
-    await this.checkAuth();
-    this.body.addEventListener("register", async () => await this.checkAuth());
-    this.body.addEventListener("exit", async () => {
-      this.auth.password.value = "";
-      this.auth.email.value = "";
+    try {
       await this.checkAuth();
-    });
-    this.body.addEventListener("click", (e) => this.routeToPage(e));
-    window.addEventListener("popstate", (e) => {
-      sessionStorage.setItem("current-url", location.pathname);
-      this.route();
-    });
-    await this.updateUserInfo();
+      this.body.addEventListener(
+        "register",
+        async () => await this.checkAuth()
+      );
+      this.body.addEventListener("exit", async () => {
+        this.auth.password.value = "";
+        this.auth.email.value = "";
+        await this.checkAuth();
+      });
+      this.body.addEventListener("click", (e) => this.routeToPage(e));
+      window.addEventListener("popstate", (e) => {
+        sessionStorage.setItem("current-url", location.pathname);
+        this.route();
+      });
+      await this.updateUserInfo();
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 }
 const app = new App();

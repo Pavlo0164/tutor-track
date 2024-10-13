@@ -1,3 +1,4 @@
+import { URL } from "../../config/config.js";
 export default class UserData {
   constructor(type, id = null) {
     this.id = id;
@@ -5,19 +6,20 @@ export default class UserData {
     this.el = this.render();
   }
   async getInfoAboutStudent() {
+    const userId = this.id;
+    const id = localStorage.getItem("id");
     try {
       const res = await fetch(URL + "/userInfo", {
         method: "GET",
         headers: {
-          id: localStorage.getItem("id"),
-          userId: this.id,
+          userid: userId,
+          id: id,
         },
       });
-      if (res.ok) {
-        const info = res.body.student;
-        return info;
-      }
-    } catch {}
+      if (res.ok) return await res.json();
+    } catch (error) {
+      throw new Error(`Error what happend`);
+    }
   }
   createInput(type, name, value = null) {
     const wrap = document.createElement("div");
@@ -25,6 +27,7 @@ export default class UserData {
     label.innerText = name;
     const input = document.createElement("input");
     input.setAttribute("type", type);
+    if (value) input.value = value;
     wrap.append(label, input);
     return wrap;
   }
@@ -42,17 +45,25 @@ export default class UserData {
     );
     return wrap;
   }
-    render() {
+  render() {
     const wrap = document.createElement("div");
-    if (!this.type)
-      wrap.innerText = "Choose the student to see more information";
-    else {
-      const details = this.getInfoAboutStudent();
-      console.log(details);
-
-      wrap.append(this.createInfoPage(details));
-    }
     wrap.classList.add("users-info");
-    return wrap;
+    if (!this.type) {
+      wrap.innerText = "Choose the student to see more information";
+      return wrap;
+    }
+    // else {
+    //   try {
+    //     const details = await this.getInfoAboutStudent();
+    //     console.log(details);
+
+    //     if (details) wrap.append(this.createInfoPage(details));
+    //     else wrap.innerText = "Student information is not available";
+    //     return wrap;
+    //   } catch (error) {
+    //     wrap.innerText = "Error loading student information";
+    //     console.log(error.message);
+    //   }
+    // }
   }
 }
