@@ -216,9 +216,8 @@ span.result-input {
 }
 
 .main-wrapper {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
-  overflow: hidden;
   color: #d4dbe2;
   background-color: #453c41;
   display: grid;
@@ -307,7 +306,8 @@ span.result-input {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  max-height: 80vh;
+  overflow-x: scroll;
   border-right: 1px solid #7b7c81;
   padding: 5px;
 }
@@ -361,7 +361,9 @@ span.result-input {
 }
 
 .users-info {
-  padding: 8px;
+  padding: 20px;
+  overflow-x: auto;
+  max-height: 80vh;
 }
 
 .one-stud.active-stude {
@@ -370,4 +372,43 @@ span.result-input {
 
 .wrap-students {
   margin-bottom: 10px;
+}
+
+.input-student-wrap {
+  display: flex;
+  gap: 20px;
+}
+.input-student-wrap > label {
+  min-width: 200px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 150%;
+}
+.input-student-wrap > input {
+  background-color: #a6a8ae;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 20px;
+  color: #131111;
+  font-weight: 500;
+}
+
+.infoPage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-save-info {
+  padding: 5px 10px;
+  border-radius: 10px;
+  background-color: #3b1f1f;
+  font-size: 22px;
+  transition: all 0.2s;
+}
+.button-save-info:hover {
+  background-color: rgba(77, 39, 39, 0.6235294118);
+}
+.button-save-info:active {
+  background-color: #3b1f1f;
 }/*# sourceMappingURL=style.css.map */

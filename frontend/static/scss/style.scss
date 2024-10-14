@@ -77,7 +77,6 @@ body {
   align-items: center;
   & > div {
     flex: 0 1 400px;
-
     background-color: #453c41;
     padding: 20px;
     border-radius: 30px;
@@ -216,9 +215,9 @@ span.result-input {
   font-weight: 300;
 }
 .main-wrapper {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
-  overflow: hidden;
+  //overflow: hidden;
   color: #d4dbe2;
   background-color: #453c41;
   display: grid;
@@ -299,8 +298,9 @@ span.result-input {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  max-height: 80vh;
 
-  overflow-y: auto;
+  overflow-x: scroll;
   border-right: 1px solid #7b7c81;
   padding: 5px;
 }
@@ -349,11 +349,49 @@ span.result-input {
   }
 }
 .users-info {
-  padding: 8px;
+  padding: 20px;
+  overflow-x: auto;
+  max-height: 80vh;
 }
 .one-stud.active-stude {
   background-color: #3b1f1f;
 }
 .wrap-students {
   margin-bottom: 10px;
+}
+.input-student-wrap {
+  display: flex;
+  gap: 20px;
+  & > label {
+    min-width: 200px;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 150%;
+  }
+  & > input {
+    background-color: #a6a8ae;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 20px;
+    color: #131111;
+    font-weight: 500;
+  }
+}
+.infoPage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.button-save-info {
+  padding: 5px 10px;
+  border-radius: 10px;
+  background-color: #3b1f1f;
+  font-size: 22px;
+  transition: all 0.2s;
+  &:hover {
+    background-color: #4d27279f;
+  }
+  &:active {
+    background-color: #3b1f1f;
+  }
 }

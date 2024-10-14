@@ -7,6 +7,7 @@ const uuid = require("uuid");
 const app = express();
 const mongoose = require("mongoose");
 const Teacher = require("./dbTeacher.js");
+const { log } = require("console");
 require("dotenv").config();
 
 const URI = process.env.DATABASE_URL;
@@ -66,6 +67,19 @@ app.get("/userInfo", async (req, res) => {
       if (!student) res.status(404).json({ message: "Student does not exist" });
       else res.status(201).json({ student: student });
     }
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+app.post("/updateInfo", async (req, res) => {
+  try {
+    console.log(req.body);
+    const userID = req.headers.userid;
+    const id = req.headers.id;
+    const teacher = await Teacher.findOne({ id: id });
+    const student = teacher.students.find((el) => el._id.equals(userID));
+    Object.assign(student, req.body);
+    await teacher.save();
   } catch (error) {
     console.log(error.message);
   }

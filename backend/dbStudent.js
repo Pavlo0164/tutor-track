@@ -50,7 +50,7 @@ const student = new mongoose.Schema({
     default: null,
   },
   costOfLesson: {
-    type: String,
+    type: Number,
     default: null,
   },
 });
