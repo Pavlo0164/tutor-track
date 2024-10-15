@@ -11,7 +11,6 @@ export default class Users {
       el.classList.remove("active-stude");
     });
     e.target.classList.add("active-stude");
-
     const eventMy = new CustomEvent("checkUserData", {
       detail: { _id: e.target.getAttribute("data-id") },
       bubbles: true,
@@ -32,7 +31,7 @@ export default class Users {
       if (!response.ok)
         throw new Error(`Error : ${response.status} ${response.statusText}`);
       const children = Array.from(this.allStudents.children);
-      //remove the previous students in HTML
+
       if (children.length !== 0) children.forEach((item) => item.remove());
 
       students.forEach((item) => {
@@ -43,6 +42,17 @@ export default class Users {
         this.allStudents.append(stud);
         stud.addEventListener("click", this.activeStudent.bind(this));
       });
+      const firstStudent = this.allStudents.firstElementChild;
+      if (firstStudent) {
+        firstStudent.classList.add("active-stude");
+        const eventFirtsStudent = new CustomEvent("firstStudent", {
+          detail: {
+            id: firstStudent.getAttribute("data-id"),
+          },
+          bubbles: true,
+        });
+        this.allStudents.dispatchEvent(eventFirtsStudent);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -51,7 +61,7 @@ export default class Users {
     if (this.regExpCheckName.test(this.input.value)) {
       try {
         const id = localStorage.getItem("id");
-        const res = await fetch(URL + "/addstud", {
+        await fetch(URL + "/addstud", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -59,13 +69,11 @@ export default class Users {
             id: id,
           }),
         });
-        const result = await res.json();
-        if (!res.ok) console.log(result.message);
         this.input.parentElement.remove();
         this.inputAlive = false;
         await this.updateShowStudents();
       } catch (error) {
-        alert(error.message);
+        console.log(error.message);
       }
     } else throw new Error("Wrong full name");
   }

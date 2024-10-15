@@ -2,15 +2,13 @@ import { URL } from "../../config/config.js";
 export default class UserData {
   constructor(type, id = null) {
     this.id = id;
-    this.type = type;
     this.el = this.render();
-    this.init(id);
+    this.init(this.id);
   }
   async init(id) {
     if (id) {
       try {
         const { details, userId } = await this.getInfoAboutStudent();
-
         if (details.student) {
           this.wrap.innerText = "";
           this.wrap.append(this.createInfoPage(details.student, userId));
@@ -74,7 +72,6 @@ export default class UserData {
         body: JSON.stringify(updatedData),
       });
     });
-
     wrap.classList.add("infoPage");
     const buttonSave = document.createElement("button");
     buttonSave.classList.add("button-save-info");
@@ -126,7 +123,7 @@ export default class UserData {
   render() {
     this.wrap = document.createElement("div");
     this.wrap.classList.add("users-info");
-    if (!this.type)
+    if (!this.id)
       this.wrap.innerText = "Choose the student to see more information";
     return this.wrap;
   }

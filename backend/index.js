@@ -73,7 +73,6 @@ app.get("/userInfo", async (req, res) => {
 });
 app.post("/updateInfo", async (req, res) => {
   try {
-    console.log(req.body);
     const userID = req.headers.userid;
     const id = req.headers.id;
     const teacher = await Teacher.findOne({ id: id });

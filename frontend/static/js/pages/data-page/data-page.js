@@ -14,6 +14,12 @@ export class Data {
       this.wrap.append(this.userData.el);
     });
     this.wrap.classList.add("users-content");
+    this.wrap.addEventListener("firstStudent", (e) => {
+      const id = e.detail.id;
+      this.wrap.lastElementChild.remove();
+      this.userData = new UserData(true, id);
+      this.wrap.append(this.userData.el);
+    });
     this.userData = new UserData(false);
     this.wrap.append(new Users().el, this.userData.el);
     this.wrap.setAttribute("data-content", "");
