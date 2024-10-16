@@ -35,6 +35,7 @@ export default class UserData {
         return { details, userId };
       }
     } catch (error) {
+      console.log(error.message);
       throw new Error(`Error what happend`);
     }
   }

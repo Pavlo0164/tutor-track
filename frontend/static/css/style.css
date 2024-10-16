@@ -147,6 +147,16 @@ body {
   display: flex;
   flex-direction: column;
 }
+.aside .menu__link {
+  transition: all 0.3s;
+  padding: 10px 20px;
+}
+.aside .menu__link.active-page {
+  background-color: #432222;
+}
+.aside .menu__link:hover {
+  background-color: #432222;
+}
 
 .input-wrapper {
   display: flex;
@@ -157,8 +167,6 @@ body {
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 10px 20px;
   font-size: 25px;
 }
 .menu a {

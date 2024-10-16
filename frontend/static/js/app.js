@@ -65,7 +65,7 @@ class App {
   route() {
     const routes = [
       {
-        path: "/",
+        path: "/home",
         view: () => {
           this.changeContent(Home);
           this.changePage(this.main.el);
@@ -153,17 +153,18 @@ class App {
     }
 
     if (pathUrl === "/auth" && !id) this.changeHref("/auth");
-    else if (pathUrl === "/auth" && id && check) this.changeHref("/");
-    else if (pathUrl === "/") {
+    else if (pathUrl === "/auth" && id && check) this.changeHref("/home");
+    else if (pathUrl === "/home") {
       if (!id || !check) this.changeHref("/auth");
       else {
         let currentUrl = sessionStorage.getItem("current-url");
         if (currentUrl && currentUrl !== "/auth")
           this.changeHref(currentUrl, false);
-        else this.changeHref("/");
+        else this.changeHref("/home");
       }
     } else if (id && check) {
       switch (pathUrl) {
+        case "/home":
         case "/data":
         case "/pay":
         case "/settings":
@@ -172,7 +173,7 @@ class App {
           this.changeHref(pathUrl);
           break;
         default:
-          this.changeHref("/");
+          this.changeHref("/home");
           break;
       }
     } else this.changeHref("/auth");
@@ -198,6 +199,9 @@ class App {
         sessionStorage.setItem("current-url", location.pathname);
         this.route();
       });
+      const currentUrl = location.pathname;
+      if (currentUrl) this.changeHref(currentUrl);
+      else this.changeHref("/");
       await this.updateUserInfo();
     } catch (error) {
       console.log(error.message);
