@@ -33,25 +33,16 @@ class App {
       console.log(error.message);
     }
   }
-  changeTitle(path) {
-    const newTitle = path.slice(1);
-    if (newTitle.length === 0) this.main.header.changeTitle("Home");
-    else {
-      const titleUpdate = newTitle[0].toUpperCase() + newTitle.slice(1);
-      this.main.header.changeTitle(titleUpdate);
-    }
-  }
   routeToPage(e) {
     if (e.target.matches("[data-link]")) {
       const href = e.target.getAttribute("href");
-      e.preventDefault();
       this.changeHref(href);
     }
   }
-  changeHref(href, flag = true) {
+  async changeHref(href) {
     history.pushState(null, null, href);
-    if (flag) sessionStorage.setItem("current-url", href);
     this.route();
+    await this.updateUserInfo();
   }
   changeContent(classPage) {
     const pageEl = new classPage();
@@ -69,7 +60,8 @@ class App {
         view: () => {
           this.changeContent(Home);
           this.changePage(this.main.el);
-          this.changeTitle("/");
+          this.main.header.changeTitle("Home");
+          this.main.aside.addClassToHome();
         },
       },
       {
@@ -77,14 +69,15 @@ class App {
         view: () => {
           this.changePage(this.main.el);
           this.changeContent(Data);
-          this.changeTitle("/data");
+          this.main.header.changeTitle("Data");
         },
       },
       {
         path: "/pay",
         view: () => {
           this.changePage(this.main.el);
-          this.changeTitle("/pay");
+
+          this.main.header.changeTitle("Pay");
           this.changeContent(Pay);
         },
       },
@@ -93,7 +86,8 @@ class App {
         view: () => {
           this.changePage(this.main.el);
           this.changeContent(Schedule);
-          this.changeTitle("/schedule");
+
+          this.main.header.changeTitle("Schedule");
         },
       },
       {
@@ -101,7 +95,8 @@ class App {
         view: () => {
           this.changePage(this.main.el);
           this.changeContent(Plan);
-          this.changeTitle("/plan");
+
+          this.main.header.changeTitle("Plan");
         },
       },
       {
@@ -109,7 +104,8 @@ class App {
         view: () => {
           this.changePage(this.main.el);
           this.changeContent(Settings);
-          this.changeTitle("/settings");
+
+          this.main.header.changeTitle("Settings");
         },
       },
       {
@@ -119,64 +115,48 @@ class App {
         },
       },
     ];
-    const activeWindow = routes.map((route) => {
-      return {
-        route: route,
-        isActive: route.path === location.pathname,
-      };
-    });
-    let searchLink = activeWindow.find((item) => item.isActive);
-    if (!searchLink) searchLink = { route: routes[0], isActive: true };
-    searchLink.route.view();
+    let searchLink = routes.find((el) => el.path === location.pathname);
+    if (!searchLink) {
+      searchLink = routes[0];
+    }
+    searchLink.view();
   }
   async checkAuth() {
     const pathUrl = location.pathname;
     const id = localStorage.getItem("id");
-    let check = true;
-
-    try {
-      if (id) {
-        try {
-          const res = await fetch(URL + "/checkId", {
-            method: "GET",
-            headers: {
-              id: id,
-            },
-          });
-          check = res.ok;
-        } catch {
-          check = false;
-        }
-      }
-    } catch (error) {
-      console.log(error.message);
+    if (!id) {
+      this.changeHref("/auth");
+      return;
     }
-
-    if (pathUrl === "/auth" && !id) this.changeHref("/auth");
-    else if (pathUrl === "/auth" && id && check) this.changeHref("/home");
-    else if (pathUrl === "/home") {
-      if (!id || !check) this.changeHref("/auth");
-      else {
-        let currentUrl = sessionStorage.getItem("current-url");
-        if (currentUrl && currentUrl !== "/auth")
-          this.changeHref(currentUrl, false);
-        else this.changeHref("/home");
+    let check = true;
+    if (id) {
+      try {
+        const res = await fetch(URL + "/checkId", {
+          method: "GET",
+          headers: {
+            id: id,
+          },
+        });
+        check = res.ok;
+      } catch (error) {
+        console.log(error.message);
+        check = false;
       }
-    } else if (id && check) {
-      switch (pathUrl) {
-        case "/home":
-        case "/data":
-        case "/pay":
-        case "/settings":
-        case "/schedule":
-        case "/plan":
-          this.changeHref(pathUrl);
-          break;
-        default:
-          this.changeHref("/home");
-          break;
-      }
-    } else this.changeHref("/auth");
+    }
+    if (!check) return;
+    switch (pathUrl) {
+      case "/home":
+      case "/data":
+      case "/pay":
+      case "/settings":
+      case "/schedule":
+      case "/plan":
+        this.changeHref(pathUrl);
+        break;
+      default:
+        this.changeHref("/home");
+        break;
+    }
   }
   changePage(elem) {
     if (this.body.firstElementChild) this.body.firstElementChild.remove();
@@ -194,18 +174,14 @@ class App {
         this.auth.email.value = "";
         await this.checkAuth();
       });
-      this.body.addEventListener("click", (e) => this.routeToPage(e));
-      window.addEventListener("popstate", (e) => {
-        sessionStorage.setItem("current-url", location.pathname);
-        this.route();
-      });
-      const currentUrl = location.pathname;
-      if (currentUrl) this.changeHref(currentUrl);
-      else this.changeHref("/");
-      await this.updateUserInfo();
     } catch (error) {
       console.log(error.message);
     }
+    this.body.addEventListener("click", (e) => this.routeToPage(e));
+    window.addEventListener("popstate", (e) => this.route());
+    this.body.addEventListener("updateActiveButton", (e) => {
+      this.main.aside.addClassToHome();
+    });
   }
 }
 const app = new App();

@@ -148,6 +148,10 @@ export class Auth {
     wrapButtons.className = "buttons-wrapper";
     this.buttonLogin = document.createElement("button");
     this.buttonLogin.addEventListener("click", async (e) => {
+      this.buttonLogin.dispatchEvent(
+        new CustomEvent("updateActiveButton", { bubbles: true })
+      );
+
       try {
         this.validateInput(e);
         const resValidate = this.checkInput(e);
@@ -158,6 +162,9 @@ export class Auth {
     this.buttonLogin.innerText = "Login";
     this.buttonRegistr = document.createElement("button");
     this.buttonRegistr.addEventListener("click", async (e) => {
+      this.buttonRegistr.dispatchEvent(
+        new CustomEvent("updateActiveButton", { bubbles: true })
+      );
       try {
         this.validateInput(e);
         const resValidate = this.checkInput(e);

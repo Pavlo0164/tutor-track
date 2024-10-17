@@ -12,6 +12,10 @@ export class Aside {
     link.classList.add(classAdd);
     return link;
   }
+  addClassToHome() {
+    const homeButton = this.el.querySelector(".link-home");
+    homeButton.classList.add("active-page");
+  }
   render() {
     const wrap = document.createElement("div");
     wrap.classList.add("aside");
@@ -19,7 +23,10 @@ export class Aside {
     title.classList.add("main-title");
     const exit = document.createElement("button");
     exit.classList.add("exit-button");
-
+    exit.addEventListener("click", (e) => {
+      const links = Array.from(this.nav.children);
+      links.forEach((el) => el.classList.remove("active-page"));
+    });
     const span = document.createElement("span");
     exit.addEventListener("click", (e) => {
       localStorage.removeItem("id");
@@ -38,7 +45,7 @@ export class Aside {
       }
     });
     this.nav.append(
-      this.createLink("/home", "Home", "link-home", "active-page"),
+      this.createLink("/home", "Home", "link-home"),
       this.createLink("/data", "Data", "link-data"),
       this.createLink("/pay", "Pay", "link-pay"),
       this.createLink("/schedule", "Schedule", "link-schedule"),
@@ -52,12 +59,12 @@ export class Aside {
     span2.innerText = "Pavlo and Anna";
     footerText.append(span2);
     wrap.append(title, this.nav, exit, footerText);
+
     const links = Array.from(this.nav.children);
-    const pathUrl = location.pathname;
     links.forEach((el) => {
-      if (el.getAttribute("href") === pathUrl) {
+      if (el.getAttribute("href") === location.pathname)
         el.classList.add("active-page");
-      } else el.classList.remove("active-page");
+      else el.classList.remove("active-page");
     });
 
     return wrap;
