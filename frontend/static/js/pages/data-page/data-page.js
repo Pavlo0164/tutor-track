@@ -13,6 +13,12 @@ export class Data {
       this.wrap.lastElementChild.remove();
       this.wrap.append(this.userData.el);
     });
+    this.wrap.addEventListener("deleteStudent", (e) => {
+      this.wrap.firstElementChild.remove();
+      this.wrap.lastElementChild.remove();
+      this.userData = new UserData(false);
+      this.wrap.append(new Users().el, this.userData.el);
+    });
     this.wrap.classList.add("users-content");
     this.wrap.addEventListener("firstStudent", (e) => {
       const id = e.detail.id;

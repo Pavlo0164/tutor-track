@@ -33,15 +33,15 @@ export default class Users {
       const children = Array.from(this.allStudents.children);
 
       if (children.length !== 0) children.forEach((item) => item.remove());
-
-      students.forEach((item) => {
-        const stud = document.createElement("div");
-        stud.classList.add("one-stud");
-        stud.setAttribute("data-id", item._id);
-        stud.innerText = item.name;
-        this.allStudents.append(stud);
-        stud.addEventListener("click", this.activeStudent.bind(this));
-      });
+      if (students)
+        students.forEach((item) => {
+          const stud = document.createElement("div");
+          stud.classList.add("one-stud");
+          stud.setAttribute("data-id", item._id);
+          stud.innerText = item.name;
+          this.allStudents.append(stud);
+          stud.addEventListener("click", this.activeStudent.bind(this));
+        });
       const firstStudent = this.allStudents.firstElementChild;
       if (firstStudent) {
         firstStudent.classList.add("active-stude");

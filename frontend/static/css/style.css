@@ -262,8 +262,11 @@ span.result-input {
 }
 
 .main-wrapper {
+  position: relative;
   min-height: 100%;
+  max-height: 100%;
   width: 100%;
+  overflow: hidden;
   color: #d4dbe2;
   background-color: #453c41;
   display: grid;
@@ -383,6 +386,32 @@ span.result-input {
   gap: 5px;
 }
 
+.successfull-update {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s ease;
+  position: absolute;
+  opacity: 0;
+  top: 5%;
+  right: -100%;
+  padding: 30px 50px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(39, 215, 39);
+}
+.successfull-update::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: url("../img/success.svg") 0 0/cover no-repeat;
+}
+.successfull-update.show-update {
+  right: 5%;
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+
 .input-add-stud {
   display: flex;
 }
@@ -446,12 +475,33 @@ span.result-input {
   gap: 10px;
 }
 
-.button-save-info {
-  padding: 5px 10px;
+.buttons-wrapper {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+}
+
+.button-save-info,
+.delete-ctudent {
+  padding: 5px 20px;
   border-radius: 10px;
-  background-color: #8c8c8c;
   font-size: 22px;
   transition: all 0.2s;
+}
+
+.delete-ctudent {
+  background-color: rgb(179, 18, 18);
+  color: rgb(212, 211, 211);
+}
+.delete-ctudent:hover {
+  background-color: rgb(221, 23, 23);
+}
+.delete-ctudent:active {
+  background-color: rgb(179, 18, 18);
+}
+
+.button-save-info {
+  background-color: #8c8c8c;
 }
 .button-save-info:hover {
   background-color: rgb(92, 91, 91);
@@ -460,4 +510,64 @@ span.result-input {
 .button-save-info:active {
   background-color: rgb(176, 173, 173);
   color: black;
+}
+
+.popup-delete-stud {
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.583);
+}
+.popup-delete-stud.active-popup {
+  left: 0;
+}
+.popup-delete-stud > div {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.popup-delete-stud > div > div:first-child {
+  color: rgb(181, 35, 35);
+  font-size: 26px;
+  line-height: 140%;
+  font-weight: 500;
+}
+.popup-delete-stud > div > div:last-child {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+}
+.popup-delete-stud > div > div:last-child button {
+  padding: 8px 16px;
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+.popup-delete-stud > div > div:last-child button:first-child {
+  background-color: rgb(196, 40, 40);
+}
+.popup-delete-stud > div > div:last-child button:first-child:hover {
+  background-color: rgb(198, 83, 83);
+}
+.popup-delete-stud > div > div:last-child button:first-child:active {
+  background-color: rgb(196, 40, 40);
+}
+.popup-delete-stud > div > div:last-child button:last-child {
+  background-color: rgb(58, 58, 218);
+}
+.popup-delete-stud > div > div:last-child button:last-child:hover {
+  background-color: rgb(110, 110, 208);
+}
+.popup-delete-stud > div > div:last-child button:last-child:active {
+  background-color: rgb(58, 58, 218);
 }/*# sourceMappingURL=style.css.map */

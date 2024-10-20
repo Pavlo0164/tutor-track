@@ -57,6 +57,25 @@ app.get("/checkId", async (req, res) => {
     }
   } catch (error) {}
 });
+app.delete("/deleteStudent", async (req, res) => {
+  try {
+    const { userid, id } = req.headers;
+
+    const teacher = await Teacher.findOne({ id: id });
+
+    if (!teacher) res.status(404).json({ message: "Teacher doesn`t exist" });
+    const student = teacher.students.find((el) => el._id.equals(userid));
+
+    if (!student) res.status(404).json({ message: "User doesn`t exists" });
+    teacher.students = teacher.students.filter((el) => !el._id.equals(userid));
+    console.log(teacher.students);
+
+    await teacher.save();
+    res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+});
 app.get("/userInfo", async (req, res) => {
   try {
     const { userid, id } = req.headers;
