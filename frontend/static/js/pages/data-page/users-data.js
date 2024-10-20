@@ -55,6 +55,9 @@ export default class UserData {
 
   createInfoPage(details, userId) {
     const wrap = document.createElement("form");
+    
+
+    
     wrap.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(wrap);
@@ -72,6 +75,10 @@ export default class UserData {
         },
         body: JSON.stringify(updatedData),
       });
+      if(sendData.status === 204){
+        
+      }
+     
     });
     wrap.classList.add("infoPage");
     const buttonSave = document.createElement("button");

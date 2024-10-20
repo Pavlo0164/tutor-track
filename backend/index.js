@@ -76,9 +76,12 @@ app.post("/updateInfo", async (req, res) => {
     const userID = req.headers.userid;
     const id = req.headers.id;
     const teacher = await Teacher.findOne({ id: id });
+    if (!teacher) res.status(404).json({ message: "Teacher does not exist" });
     const student = teacher.students.find((el) => el._id.equals(userID));
+    if (!student) res.status(404).json({ message: "Student does not exist" });
     Object.assign(student, req.body);
     await teacher.save();
+    res.status(204).end();
   } catch (error) {
     console.log(error.message);
   }

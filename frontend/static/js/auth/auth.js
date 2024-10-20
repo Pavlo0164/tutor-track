@@ -81,6 +81,8 @@ export class Auth {
   async login() {
     try {
       this.resultErr.innerText = "";
+      this.spinner.classList.add("active-spinner");
+
       const user = {
         email: this.email.value,
         password: this.password.value,
@@ -92,6 +94,7 @@ export class Auth {
         },
         body: JSON.stringify(user),
       });
+      this.spinner.classList.remove("active-spinner");
       if (reg.status === 401) {
         const result = await reg.json();
         this.resultErr.innerText = result.message;
@@ -107,11 +110,12 @@ export class Auth {
         );
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   }
   async register() {
     try {
+      this.spinner.classList.add("active-spinner");
       this.resultErr.innerText = "";
       const user = {
         email: this.email.value,
@@ -124,6 +128,7 @@ export class Auth {
         },
         body: JSON.stringify(user),
       });
+      this.spinner.classList.remove("active-spinner");
       if (reg.status === 401) {
         const result = await reg.json();
         this.resultErr.innerText = result.message;
@@ -139,7 +144,7 @@ export class Auth {
         );
       }
     } catch (error) {
-      alert(error.message);
+      console.error(error);
       this.resultErr.innerText = error.message;
     }
   }
@@ -156,7 +161,9 @@ export class Auth {
         this.validateInput(e);
         const resValidate = this.checkInput(e);
         if (resValidate === 2) await this.login();
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     });
 
     this.buttonLogin.innerText = "Login";
@@ -170,7 +177,7 @@ export class Auth {
         const resValidate = this.checkInput(e);
         if (resValidate === 2) await this.register();
       } catch (error) {
-        console.log(error.message);
+        console.error(error);
       }
     });
     this.buttonRegistr.innerText = "Registration";
@@ -180,6 +187,13 @@ export class Auth {
   render() {
     const container = document.createElement("div");
     container.className = "form__wrapper";
+
+    this.spinner = document.createElement("div");
+    this.spinner.classList.add("login-spinner");
+
+    const spanSpinner = document.createElement("span");
+    spanSpinner.classList.add("span-spinner");
+    this.spinner.append(spanSpinner);
     const wrap = document.createElement("div");
     container.append(wrap);
     const title = document.createElement("h2");
@@ -191,7 +205,8 @@ export class Auth {
       this.createInput("Email", "email"),
       this.createInput("Password", "password"),
       this.resultErr,
-      this.createButtons()
+      this.createButtons(),
+      this.spinner
     );
     return container;
   }

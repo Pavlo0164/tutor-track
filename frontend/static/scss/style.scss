@@ -76,6 +76,43 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  & .login-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    & .span-spinner {
+      display: block;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 4px solid #595a5b;
+      //background-color: #131111;
+      border-top: 4px solid #131111;
+      animation: spin 1s linear infinite;
+    }
+    &.active-spinner {
+      opacity: 1;
+      z-index: 2;
+    }
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: all 0.1s ease;
+    background-color: #595a5b;
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
   & > div {
     flex: 0 1 400px;
     background-color: #939393;
@@ -123,6 +160,7 @@ body {
     }
     @media (any-hover: hover) {
       &:hover {
+        color: white;
         background-color: #424242;
       }
     }
@@ -135,7 +173,7 @@ body {
 .aside {
   color: black;
   border-right: 1px solid #7b7c81;
-  background-color: rgb(176, 173, 173);
+  background-color: rgb(146, 146, 146);
   display: flex;
   flex-direction: column;
 
@@ -144,10 +182,10 @@ body {
     transition: all 0.3s;
     padding: 10px 20px;
     &.active-page {
-      background-color: rgb(126, 124, 124);
+      background-color: rgb(85, 85, 85);
     }
     &:hover {
-      background-color: rgb(114, 112, 112);
+      background-color: rgb(85, 85, 85);
     }
   }
 }
@@ -272,12 +310,12 @@ span.result-input {
   }
 }
 .footer-text {
-  color: #7b7c81;
+  color: #3a3a3a;
   font-size: 12px;
   text-align: center;
   padding: 30px;
   & span {
-    color: #7b586b;
+    color: #6b686a;
   }
 }
 .image-wrap {
@@ -406,8 +444,10 @@ span.result-input {
   transition: all 0.2s;
   &:hover {
     background-color: rgb(92, 91, 91);
+    color: white;
   }
   &:active {
     background-color: rgb(176, 173, 173);
+    color: black;
   }
 }
