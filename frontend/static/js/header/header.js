@@ -1,3 +1,4 @@
+import createElement from "../functions/create-element.js"
 export class Header {
 	constructor(title) {
 		this.titleInner = title
@@ -13,26 +14,29 @@ export class Header {
 		this.userEmail.innerText = email
 	}
 	createUserGroup() {
-		const wrap = document.createElement("div")
-		wrap.classList.add("user-group")
-		const textWrap = document.createElement("div")
+		const wrap = createElement("div", ["header__group", "user-group"])
+		const textWrap = createElement("div", "user-group__user-info")
 		this.userName = document.createElement("p")
 		this.userEmail = document.createElement("p")
 		textWrap.append(this.userName, this.userEmail)
-		const imageWrap = document.createElement("div")
-		imageWrap.classList.add("image-wrap")
-		const image = document.createElement("img")
-		image.setAttribute("src", "./img/user.svg")
-		imageWrap.append(image)
+		const imageWrap = createElement("div", [
+			"user-group__wrap-image",
+			"image-wrap",
+		])
+		createElement("img", null, { src: "./img/user.svg" }, null, imageWrap)
 		wrap.append(textWrap, imageWrap)
 		return wrap
 	}
 	render() {
-		const wrap = document.createElement("header")
-		wrap.classList.add("header")
-		this.title = document.createElement("h3")
-		this.title.innerText = this.titleInner
-		wrap.append(this.title, this.createUserGroup())
+		const wrap = createElement("header", ["main-content__header", "header"])
+		this.title = createElement(
+			"h3",
+			"header__title",
+			null,
+			this.titleInner,
+			wrap
+		)
+		wrap.append(this.createUserGroup())
 		return wrap
 	}
 }

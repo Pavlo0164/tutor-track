@@ -1,14 +1,19 @@
+import createElement from "../functions/create-element.js"
 export class Aside {
 	constructor() {
 		this.el = this.render()
 	}
 	createLink(ref, inner, classAdd, classActive = null) {
-		const link = document.createElement("a")
-		link.setAttribute("href", ref)
-		link.setAttribute("data-link", "")
-		link.innerText = inner
+		const link = createElement(
+			"a",
+			"menu__link",
+			{
+				href: ref,
+				"data-link": "",
+			},
+			inner
+		)
 		if (classActive) link.classList.add(classActive)
-		link.classList.add("menu__link")
 		link.classList.add(classAdd)
 		return link
 	}
@@ -17,26 +22,9 @@ export class Aside {
 		homeButton.classList.add("active-page")
 	}
 	render() {
-		const wrap = document.createElement("div")
-		wrap.classList.add("aside")
-		const title = document.createElement("h1")
-		title.classList.add("main-title")
-		const exit = document.createElement("button")
-		exit.classList.add("exit-button")
-		exit.addEventListener("click", (e) => {
-			const links = Array.from(this.nav.children)
-			links.forEach((el) => el.classList.remove("active-page"))
-		})
-		const span = document.createElement("span")
-		exit.addEventListener("click", (e) => {
-			localStorage.removeItem("id")
-			this.el.dispatchEvent(new CustomEvent("exit", { bubbles: true }))
-		})
-		exit.innerText = "Exit"
-		exit.prepend(span)
-		this.nav = document.createElement("nav")
-		this.nav.className = "aside__menu menu"
-
+		const wrap = createElement("div", ["main-wrapper__aside", "aside"])
+		createElement("h1", ["aside__title", "main-title"], null, null, wrap)
+		this.nav = createElement("nav", ["aside__menu", "menu"], null, null, wrap)
 		this.nav.addEventListener("click", (e) => {
 			const links = Array.from(this.nav.children)
 			if (e.target.classList.contains("menu__link")) {
@@ -52,21 +40,38 @@ export class Aside {
 			this.createLink("/plan", "Plan", "link-plan"),
 			this.createLink("/settings", "Settings", "link-settings")
 		)
-		const footerText = document.createElement("div")
-		footerText.classList.add("footer-text")
-		footerText.innerText = `2024 @ With love from `
-		const span2 = document.createElement("span")
-		span2.innerText = "Pavlo and Anna"
-		footerText.append(span2)
-		wrap.append(title, this.nav, exit, footerText)
-
+		const exit = createElement(
+			"button",
+			["aside__exit-button", "exit-button"],
+			null,
+			"Exit",
+			wrap
+		)
+		exit.addEventListener("click", (e) => {
+			const links = Array.from(this.nav.children)
+			links.forEach((el) => el.classList.remove("active-page"))
+			localStorage.removeItem("id")
+			this.el.dispatchEvent(new CustomEvent("exit", { bubbles: true }))
+		})
+		createElement(
+			"span",
+			null,
+			null,
+			"Pavlo and Anna",
+			createElement(
+				"div",
+				["aside__footer", "footer-text"],
+				null,
+				"2024 @ With love from",
+				wrap
+			)
+		)
 		const links = Array.from(this.nav.children)
 		links.forEach((el) => {
 			if (el.getAttribute("href") === location.pathname)
 				el.classList.add("active-page")
 			else el.classList.remove("active-page")
 		})
-
 		return wrap
 	}
 }

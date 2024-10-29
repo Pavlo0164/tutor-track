@@ -1,4 +1,5 @@
 import { URL } from "../../config/config.js"
+import createElement from "../../functions/create-element.js"
 export default class Users {
 	constructor() {
 		this.inputAlive = false
@@ -31,15 +32,16 @@ export default class Users {
 			if (!response.ok)
 				throw new Error(`Error : ${response.status} ${response.statusText}`)
 			const children = Array.from(this.allStudents.children)
-
 			if (children.length !== 0) children.forEach((item) => item.remove())
 			if (students.length > 0)
 				students.forEach((item) => {
-					const stud = document.createElement("div")
-					stud.classList.add("one-stud")
-					stud.setAttribute("data-id", item._id)
-					stud.innerText = item.name
-					this.allStudents.append(stud)
+					const stud = createElement(
+						"div",
+						["wrap-students__student", "one-stud"],
+						{ "data-id": item._id },
+						item.name,
+						this.allStudents
+					)
 					stud.addEventListener("click", this.activeStudent.bind(this))
 				})
 			const firstStudent = this.allStudents.firstElementChild
@@ -58,8 +60,8 @@ export default class Users {
 		}
 	}
 	async createNewStudents() {
-		if (this.regExpCheckName.test(this.input.value)) {
-			try {
+		try {
+			if (this.regExpCheckName.test(this.input.value)) {
 				const id = localStorage.getItem("id")
 				const newStud = await fetch(URL + "/addstud", {
 					method: "POST",
@@ -74,29 +76,34 @@ export default class Users {
 				this.input.parentElement.remove()
 				this.inputAlive = false
 				await this.updateShowStudents()
-			} catch (error) {
-				console.log(error.message)
-			}
-		} else throw new Error("Wrong full name")
+			} else throw new Error("Wrong full name")
+		} catch (error) {
+			console.log(error.message)
+		}
 	}
 	createInputAddStud() {
-		const inputWrap = document.createElement("div")
-		inputWrap.classList.add("input-add-stud")
-		this.input = document.createElement("input")
-		this.input.placeholder = "Enter student full name"
-		const button = document.createElement("button")
-		button.classList.add('add-stud-button')
+		const inputWrap = createElement("div", "input-add-stud")
+		this.input = createElement(
+			"input",
+			null,
+			{ placeholder: "Enter student full name" },
+			null,
+			inputWrap
+		)
+		const button = createElement(
+			"button",
+			["add-stud-button", "check-stud"],
+			null,
+			"Add",
+			inputWrap
+		)
+
 		button.addEventListener("click", async () => {
 			try {
 				await this.createNewStudents()
-			} catch (error) {
-				alert(error.message)
-			}
+				this.btnCancel.firstElementChild.classList.remove("show-btn")
+			} catch (error) {}
 		})
-
-		button.innerText = "Add"
-		button.classList.add("check-stud")
-		inputWrap.append(this.input, button)
 		return inputWrap
 	}
 	eventAddStud() {
@@ -113,35 +120,44 @@ export default class Users {
 	}
 	createBtnAddStud(eventNow, addClass, inner) {
 		const wrapButton = document.createElement("div")
-		const button = document.createElement("button")
-		button.innerText = inner
+		const button = createElement("button", addClass, null, inner, wrapButton)
 		button.addEventListener("click", eventNow.bind(this))
-		button.classList.add(addClass)
-		wrapButton.append(button)
 		return wrapButton
 	}
 	async updateStude() {
 		await this.updateShowStudents()
 	}
 	render() {
-		const wrap = document.createElement("div")
-		wrap.classList.add("users-block")
-		this.wrapInputAddStud = document.createElement("div")
-		this.allStudents = document.createElement("div")
-		this.allStudents.classList.add("wrap-students")
-		const wrapButtons = document.createElement("div")
+		const wrap = createElement("div", [
+			"users-content__users-list",
+			"users-block",
+		])
+		this.wrapInputAddStud = createElement("div", "users-block__input-wrapper")
+		this.allStudents = createElement("div", [
+			"users-block__students-wrap",
+			"wrap-students",
+		])
+		const wrapButtons = createElement("div", [
+			"users-block__buttons",
+			"wrap-buttons-stud",
+		])
 		const btnAdd = this.createBtnAddStud(
 			this.eventAddStud,
 			"button-add-student",
 			"Add student"
 		)
-		const btnCancel = this.createBtnAddStud(
+		btnAdd.addEventListener("click", (e) => {
+			this.btnCancel.firstElementChild.classList.add("show-btn")
+		})
+		this.btnCancel = this.createBtnAddStud(
 			this.eventCanselAddStud,
 			"button-cancel-add-student",
 			"Cancel"
 		)
-		wrapButtons.append(btnAdd, btnCancel)
-		wrapButtons.classList.add("wrap-buttons-stud")
+		this.btnCancel.addEventListener("click", (e) => {
+			this.btnCancel.firstElementChild.classList.remove("show-btn")
+		})
+		wrapButtons.append(btnAdd, this.btnCancel)
 		wrap.append(this.wrapInputAddStud, this.allStudents, wrapButtons)
 		this.updateStude()
 		return wrap

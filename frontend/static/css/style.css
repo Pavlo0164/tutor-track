@@ -70,11 +70,6 @@ h6 {
   font-size: inherit;
 }
 
-body {
-  font-family: "Poppins", sans-serif;
-  color: #4a4a4a;
-}
-
 .form__wrapper {
   background-color: #faf9f6;
   min-height: 100%;
@@ -83,7 +78,16 @@ body {
   align-items: center;
   position: relative;
 }
-.form__wrapper .login-spinner {
+.form__wrapper > .form {
+  flex: 0 1 400px;
+  background-color: #ededed;
+  padding: 20px;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.form__wrapper > .form > .login-spinner {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,7 +101,7 @@ body {
   transition: all 0.1s ease;
   background-color: #4a4a4a;
 }
-.form__wrapper .login-spinner .span-spinner {
+.form__wrapper > .form > .login-spinner .span-spinner {
   display: block;
   width: 60px;
   height: 60px;
@@ -106,7 +110,7 @@ body {
   border-top: 4px solid #1a1a2e;
   animation: spin 1s linear infinite;
 }
-.form__wrapper .login-spinner.active-spinner {
+.form__wrapper > .form > .login-spinner.active-spinner {
   opacity: 1;
   z-index: 2;
 }
@@ -118,48 +122,39 @@ body {
     transform: rotate(360deg);
   }
 }
-.form__wrapper > div {
-  flex: 0 1 400px;
-  background-color: #ededed;
-  padding: 20px;
-  border-radius: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-.form__wrapper h2 {
+.form__wrapper > .form h2 {
   font-size: 30px;
   padding-bottom: 10px;
   color: #1a2e5f;
   border-bottom: 1px solid #c0c0c0;
 }
-.form__wrapper input {
+.form__wrapper > .form input {
   padding: 5px;
   border: 1px solid #c0c0c0;
   border-radius: 5px;
 }
-.form__wrapper input:focus {
+.form__wrapper > .form input:focus {
   border-color: #17bebb;
   outline: 1px solid #17bebb;
 }
-.form__wrapper input.valid {
-  border-color: green;
-  outline: 1px solid green;
+.form__wrapper > .form input.valid {
+  border-color: #4caf50;
+  outline: 1px solid #4caf50;
 }
-.form__wrapper input.not-valid {
-  border-color: rgb(232, 19, 19);
-  outline: 1px solid rgb(232, 19, 19);
+.form__wrapper > .form input.not-valid {
+  border-color: #d32f2f;
+  outline: 1px solid #d32f2f;
 }
-.form__wrapper input::-moz-placeholder {
+.form__wrapper > .form input::-moz-placeholder {
   font-family: inherit;
 }
-.form__wrapper input::placeholder {
+.form__wrapper > .form input::placeholder {
   font-family: inherit;
 }
-.form__wrapper span {
+.form__wrapper > .form span {
   font-size: 1px;
 }
-.form__wrapper button {
+.form__wrapper > .form button {
   transition: all 0.3s ease;
   border: 1px solid #333333;
   border-radius: 10px;
@@ -169,12 +164,41 @@ body {
   font-size: 20px;
 }
 @media (any-hover: hover) {
-  .form__wrapper button:hover {
+  .form__wrapper > .form button:hover {
     opacity: 0.6;
   }
 }
-.form__wrapper button:active {
+.form__wrapper > .form button:active {
   opacity: 1;
+}
+.form__wrapper > .form .input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form__wrapper > .form .buttons-wrapper {
+  display: flex;
+  gap: 20px;
+}
+.form__wrapper > .form .result-err {
+  font-weight: 300;
+  color: #d32f2f;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 5px;
+  background-color: rgba(255, 107, 107, 0.5098039216);
+}
+.form__wrapper > .form span.result-input {
+  font-size: 12px;
+  color: #d32f2f;
+  position: relative;
+  display: inline;
+  padding: 5px;
+  border-radius: 2px;
+  top: -5px;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 107, 107, 0.5098039216);
+  font-weight: 300;
 }
 
 .aside {
@@ -194,70 +218,318 @@ body {
 .aside .menu__link:hover, .aside .exit-button:hover {
   background-color: #b4b4b4;
 }
-
-.input-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.aside .main-title::before {
+  content: "";
+  width: 100%;
+  height: 73px;
+  background: url("../img/logo2.jpeg") 0 0/cover no-repeat;
 }
-
-.menu {
+.aside .menu {
   display: flex;
   flex-direction: column;
   font-size: 25px;
 }
-.menu a {
+.aside .menu a {
   display: flex;
   justify-content: flex-start;
   align-items: flex-end;
   gap: 10px;
 }
-.menu a::before {
+.aside .menu a::before {
   content: "";
   width: 25px;
   height: 25px;
 }
-.menu a:nth-child(1)::before {
+.aside .menu a:nth-child(1)::before {
   background: url("../img/home.svg") 0 0/contain no-repeat;
 }
-.menu a:nth-child(2)::before {
+.aside .menu a:nth-child(2)::before {
   background: url("../img/data.svg") 0 0/contain no-repeat;
 }
-.menu a:nth-child(3)::before {
+.aside .menu a:nth-child(3)::before {
   background: url("../img/pay.svg") 0 0/contain no-repeat;
 }
-.menu a:nth-child(4)::before {
+.aside .menu a:nth-child(4)::before {
   background: url("../img/schedule.svg") 0 0/contain no-repeat;
 }
-.menu a:nth-child(5)::before {
+.aside .menu a:nth-child(5)::before {
   background: url("../img/plan.svg") 0 0/contain no-repeat;
 }
-.menu a:nth-child(6)::before {
+.aside .menu a:nth-child(6)::before {
   background: url("../img/settings.svg") 0 0/contain no-repeat;
 }
-
-.main-title {
-  padding: 10px;
-  border-bottom: 1px solid #c0c0c0;
-}
-.main-title::before {
-  content: "";
+.aside .exit-button {
+  display: flex;
+  display: flex;
+  align-items: flex-start;
+  font-size: 25px;
+  gap: 5px;
+  padding: 3px 20px;
   width: 100%;
-  height: 73px;
-  background: url("../img/logo2.jpg") 0 0/cover no-repeat;
+}
+.aside .exit-button::before {
+  content: "";
+  display: block;
+  background: url("../img/exit.svg") 0 0/contain no-repeat;
+  width: 27px;
+  height: 27px;
+}
+.aside .footer-text {
+  font-size: 12px;
+  text-align: center;
+  padding: 30px;
+}
+.aside .footer-text span {
+  color: #333333;
 }
 
-span.result-input {
-  font-size: 12px;
-  color: red;
-  position: relative;
-  display: inline;
-  padding: 3px;
-  border-radius: 2px;
-  top: -5px;
-  transition: all 0.3s ease;
-  background-color: rgba(255, 0, 0, 0.101);
+.header {
+  border-bottom: 1px solid #c0c0c0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 24px;
+}
+.header h3 {
+  font-size: 40px;
+}
+.header .user-group {
+  display: flex;
+  align-items: center;
+}
+.header .user-group > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.header .user-group p {
+  text-align: end;
   font-weight: 300;
+  font-size: 14px;
+}
+.header .user-group .image-wrap {
+  width: 40px;
+  height: 40px;
+}
+.header .user-group .image-wrap img {
+  width: 100%;
+  height: 100%;
+}
+
+.users-block {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-x: scroll;
+  border-right: 1px solid #c0c0c0;
+  padding: 5px;
+}
+.users-block > .wrap-students {
+  margin-bottom: 10px;
+}
+.users-block > .wrap-students > .one-stud {
+  padding: 10px;
+  font-size: 20px;
+  background-color: #e0e0e0;
+  font-weight: 500;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.users-block > .wrap-students > .one-stud:hover {
+  background-color: #d1d1d1;
+}
+.users-block > .wrap-students > .one-stud.active-stude {
+  background-color: #b4b4b4;
+}
+.users-block > .wrap-buttons-stud {
+  display: flex;
+  gap: 5px;
+}
+.users-block > .wrap-buttons-stud .button-cancel-add-student {
+  transition: all 0.2s ease;
+  opacity: 0;
+  display: none;
+}
+.users-block > .wrap-buttons-stud .button-cancel-add-student.show-btn {
+  display: block;
+  opacity: 1;
+}
+.users-block > .wrap-buttons-stud .button-add-student,
+.users-block > .wrap-buttons-stud .button-cancel-add-student {
+  text-transform: capitalize;
+  border: 1px solid #c0c0c0;
+  padding: 5px 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background-color: #17bebb;
+}
+.users-block > .wrap-buttons-stud .button-add-student:hover,
+.users-block > .wrap-buttons-stud .button-cancel-add-student:hover {
+  opacity: 0.8;
+}
+.users-block > .wrap-buttons-stud .button-add-student:active,
+.users-block > .wrap-buttons-stud .button-cancel-add-student:active {
+  opacity: 1;
+}
+.users-block .input-add-stud {
+  display: flex;
+}
+.users-block .input-add-stud .check-stud {
+  padding: 5px;
+  background-color: #ff8c42;
+}
+.users-block .input-add-stud input {
+  padding: 5px 10px;
+  border: 1px solid #c0c0c0;
+}
+.users-block .input-add-stud input:focus {
+  outline: none;
+}
+.users-block .input-add-stud > button {
+  background-color: #ff8c42;
+  transition: all 0.2s ease;
+}
+.users-block .input-add-stud > button:hover {
+  opacity: 0.8;
+}
+.users-block .input-add-stud > button:active {
+  opacity: 1;
+}
+
+.infoPage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.infoPage > .input-student-wrap {
+  display: flex;
+  gap: 20px;
+}
+.infoPage > .input-student-wrap > label {
+  min-width: 200px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 150%;
+}
+.infoPage > .input-student-wrap > input {
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 20px;
+  font-weight: 500;
+}
+.infoPage > .buttons-wrapper {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+}
+.infoPage > .buttons-wrapper .button-save-info,
+.infoPage > .buttons-wrapper .delete-ctudent {
+  padding: 5px 20px;
+  border-radius: 10px;
+  font-size: 22px;
+  transition: all 0.2s;
+}
+.infoPage > .buttons-wrapper .delete-ctudent {
+  background-color: #d32f2f;
+  color: #ededed;
+}
+.infoPage > .buttons-wrapper .button-save-info {
+  background-color: #b4b4b4;
+}
+.infoPage > .buttons-wrapper .delete-ctudent:hover,
+.infoPage > .buttons-wrapper .button-save-info:hover {
+  opacity: 0.8;
+}
+.infoPage > .buttons-wrapper .delete-ctudent:active,
+.infoPage > .buttons-wrapper .button-save-info:active {
+  opacity: 1;
+}
+.infoPage > .successfull-update {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.4s ease;
+  position: absolute;
+  opacity: 0;
+  top: 5%;
+  right: -100%;
+  padding: 30px 50px;
+  border-radius: 10px;
+  background-color: #ededed;
+  border: 1px solid #4caf50;
+}
+.infoPage > .successfull-update::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: url("../img/success.svg") 0 0/cover no-repeat;
+}
+.infoPage > .successfull-update.show-update {
+  right: 5%;
+  opacity: 1;
+  transition: all 0.4s ease;
+}
+.infoPage > .popup-delete-stud {
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #d1d1d1;
+  opacity: 0.9;
+}
+.infoPage > .popup-delete-stud.active-popup {
+  left: 0;
+}
+.infoPage > .popup-delete-stud > div {
+  background-color: #faf9f6;
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.infoPage > .popup-delete-stud > div > div:first-child {
+  color: #2e3a59;
+  font-size: 26px;
+  line-height: 140%;
+  font-weight: 500;
+}
+.infoPage > .popup-delete-stud > div > div:last-child {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+}
+.infoPage > .popup-delete-stud > div > div:last-child button {
+  padding: 8px 16px;
+  font-size: 20px;
+  color: #e0e0e0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+.infoPage > .popup-delete-stud > div > div:last-child button:first-child {
+  background-color: #d32f2f;
+}
+.infoPage > .popup-delete-stud > div > div:last-child button:last-child {
+  background-color: #1a2e5f;
+}
+.infoPage > .popup-delete-stud > div > div:last-child button:first-child:hover, .infoPage > .popup-delete-stud > div > div:last-child button:last-child:hover {
+  opacity: 0.8;
+}
+.infoPage > .popup-delete-stud > div > div:last-child button:first-child:active, .infoPage > .popup-delete-stud > div > div:last-child button:last-child:active {
+  opacity: 1;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: #4a4a4a;
 }
 
 .main-wrapper {
@@ -272,22 +544,6 @@ span.result-input {
   grid-template-columns: 250px 1fr;
 }
 
-.exit-button {
-  display: flex;
-  display: flex;
-  align-items: flex-start;
-  font-size: 25px;
-  gap: 10px;
-  padding: 3px 20px;
-  width: 100%;
-}
-.exit-button span {
-  display: block;
-  background: url("../img/exit.svg") 0 0/contain no-repeat;
-  width: 27px;
-  height: 27px;
-}
-
 .main-content {
   padding: 30px;
   display: flex;
@@ -296,284 +552,14 @@ span.result-input {
   background-color: #faf9f6;
 }
 
-.header {
-  border-bottom: 1px solid #c0c0c0;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding-bottom: 24px;
-}
-.header h3 {
-  font-size: 40px;
-}
-
-.footer-text {
-  font-size: 12px;
-  text-align: center;
-  padding: 30px;
-}
-.footer-text span {
-  color: #333333;
-}
-
-.image-wrap {
-  width: 40px;
-  height: 40px;
-}
-.image-wrap img {
-  width: 100%;
-  height: 100%;
-}
-
-.user-group {
-  display: flex;
-  align-items: center;
-}
-.user-group > div:first-child {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.user-group p {
-  text-align: end;
-  font-weight: 300;
-  font-size: 14px;
-}
-
-.result-err {
-  font-weight: 300;
-  color: red;
-  font-size: 14px;
-  line-height: 1.5;
-  border-radius: 5px;
-  background-color: rgba(255, 0, 0, 0.193);
-}
-
-.users-block {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  max-height: 80vh;
-  overflow-x: scroll;
-  border-right: 1px solid #7b7c81;
-  padding: 5px;
-}
-
-.check-stud {
-  padding: 5px;
-  background-color: #5b585a;
-}
-
 .users-content {
   height: 100%;
   display: grid;
   grid-template-columns: 250px 1fr;
 }
 
-.button-add-student,
-.button-cancel-add-student {
-  text-transform: capitalize;
-  border: 1px solid #7b7c81;
-  padding: 5px 10px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-.button-add-student:hover,
-.button-cancel-add-student:hover {
-  background-color: #9b9ca0;
-}
-.button-add-student:active,
-.button-cancel-add-student:active {
-  background-color: white;
-}
-
-.wrap-buttons-stud {
-  display: flex;
-  gap: 5px;
-}
-
-.successfull-update {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.4s ease;
-  position: absolute;
-  opacity: 0;
-  top: 5%;
-  right: -100%;
-  padding: 30px 50px;
-  border-radius: 10px;
-  background-color: rgb(255, 255, 255);
-  border: 1px solid rgb(39, 215, 39);
-}
-.successfull-update::before {
-  content: "";
-  width: 20px;
-  height: 20px;
-  background: url("../img/success.svg") 0 0/cover no-repeat;
-}
-.successfull-update.show-update {
-  right: 5%;
-  opacity: 1;
-  transition: all 0.4s ease;
-}
-
-.input-add-stud {
-  display: flex;
-}
-.input-add-stud input {
-  padding: 5px 10px;
-  border: 1px solid #7b7c81;
-}
-.input-add-stud input:focus {
-  outline: none;
-}
-
-.one-stud {
-  padding: 10px;
-  font-size: 20px;
-  background-color: #b9b9b9;
-  font-weight: 500;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-.one-stud:hover {
-  background-color: #424344;
-}
-
 .users-info {
   padding: 20px;
   overflow-x: auto;
   max-height: 80vh;
-}
-
-.one-stud.active-stude {
-  background-color: #6c6c6c;
-}
-
-.wrap-students {
-  margin-bottom: 10px;
-}
-
-.input-student-wrap {
-  display: flex;
-  gap: 20px;
-}
-.input-student-wrap > label {
-  min-width: 200px;
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 150%;
-}
-.input-student-wrap > input {
-  background-color: #a6a8ae;
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 20px;
-  color: #131111;
-  font-weight: 500;
-}
-
-.infoPage {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.buttons-wrapper {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-end;
-}
-
-.button-save-info,
-.delete-ctudent {
-  padding: 5px 20px;
-  border-radius: 10px;
-  font-size: 22px;
-  transition: all 0.2s;
-}
-
-.delete-ctudent {
-  background-color: rgb(179, 18, 18);
-  color: rgb(212, 211, 211);
-}
-.delete-ctudent:hover {
-  background-color: rgb(221, 23, 23);
-}
-.delete-ctudent:active {
-  background-color: rgb(179, 18, 18);
-}
-
-.button-save-info {
-  background-color: #8c8c8c;
-}
-.button-save-info:hover {
-  background-color: rgb(92, 91, 91);
-  color: white;
-}
-.button-save-info:active {
-  background-color: rgb(176, 173, 173);
-  color: black;
-}
-
-.popup-delete-stud {
-  transition: all 0.3s ease;
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.583);
-}
-.popup-delete-stud.active-popup {
-  left: 0;
-}
-.popup-delete-stud > div {
-  background-color: white;
-  border-radius: 10px;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-.popup-delete-stud > div > div:first-child {
-  color: rgb(181, 35, 35);
-  font-size: 26px;
-  line-height: 140%;
-  font-weight: 500;
-}
-.popup-delete-stud > div > div:last-child {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-end;
-}
-.popup-delete-stud > div > div:last-child button {
-  padding: 8px 16px;
-  font-size: 20px;
-  color: rgb(255, 255, 255);
-  border-radius: 10px;
-  transition: all 0.3s ease;
-}
-.popup-delete-stud > div > div:last-child button:first-child {
-  background-color: rgb(196, 40, 40);
-}
-.popup-delete-stud > div > div:last-child button:first-child:hover {
-  background-color: rgb(198, 83, 83);
-}
-.popup-delete-stud > div > div:last-child button:first-child:active {
-  background-color: rgb(196, 40, 40);
-}
-.popup-delete-stud > div > div:last-child button:last-child {
-  background-color: rgb(58, 58, 218);
-}
-.popup-delete-stud > div > div:last-child button:last-child:hover {
-  background-color: rgb(110, 110, 208);
-}
-.popup-delete-stud > div > div:last-child button:last-child:active {
-  background-color: rgb(58, 58, 218);
 }/*# sourceMappingURL=style.css.map */

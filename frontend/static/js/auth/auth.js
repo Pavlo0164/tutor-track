@@ -1,4 +1,5 @@
 import { URL } from "../config/config.js"
+import createElement from "../functions/create-element.js"
 export class Auth {
 	constructor() {
 		this.title = "Auth"
@@ -48,7 +49,6 @@ export class Auth {
 			)
 			count--
 		}
-
 		return count
 	}
 	validateInput(event) {
@@ -64,25 +64,28 @@ export class Auth {
 		}
 	}
 	createInput(labelInner, type) {
-		const wrap = document.createElement("div")
-		wrap.classList.add("input-wrapper")
-		const label = document.createElement("label")
-		label.setAttribute("for", type)
-		label.innerText = labelInner
-		this[type] = document.createElement("input")
-		this[type].type = type
-		this[type].setAttribute("id", type)
-		this[type].setAttribute("placeholder", `Enter ${type}`)
+		const wrap = createElement("div", ["form__wrapper-input", "input-wrapper"])
+		createElement("label", null, { for: type }, labelInner, wrap)
+		this[type] = createElement(
+			"input",
+			null,
+			{
+				type: type,
+				id: type,
+				placeholder: `Enter ${type}`,
+			},
+			null,
+			wrap
+		)
 		const result = document.createElement("span")
+		wrap.append(result)
 		this[type].addEventListener("input", (e) => this.validateInput(e))
-		wrap.append(label, this[type], result)
 		return wrap
 	}
 	async login() {
 		try {
 			this.resultErr.innerText = ""
 			this.spinner.classList.add("active-spinner")
-
 			const user = {
 				email: this.email.value,
 				password: this.password.value,
@@ -148,65 +151,75 @@ export class Auth {
 			this.resultErr.innerText = error.message
 		}
 	}
+	async eventLogin(e) {
+		this.buttonLogin.dispatchEvent(
+			new CustomEvent("updateActiveButton", { bubbles: true })
+		)
+		try {
+			this.validateInput(e)
+			const resValidate = this.checkInput(e)
+			if (resValidate === 2) await this.login()
+		} catch (error) {
+			console.error(error)
+		}
+	}
+	async eventRegistr(e) {
+		this.buttonRegistr.dispatchEvent(
+			new CustomEvent("updateActiveButton", { bubbles: true })
+		)
+		try {
+			this.validateInput(e)
+			const resValidate = this.checkInput(e)
+			if (resValidate === 2) await this.register()
+		} catch (error) {
+			console.error(error)
+		}
+	}
 	createButtons() {
-		const wrapButtons = document.createElement("div")
-		wrapButtons.className = "buttons-wrapper"
-		this.buttonLogin = document.createElement("button")
-		this.buttonLogin.addEventListener("click", async (e) => {
-			this.buttonLogin.dispatchEvent(
-				new CustomEvent("updateActiveButton", { bubbles: true })
-			)
-
-			try {
-				this.validateInput(e)
-				const resValidate = this.checkInput(e)
-				if (resValidate === 2) await this.login()
-			} catch (error) {
-				console.error(error)
-			}
-		})
-
-		this.buttonLogin.innerText = "Login"
-		this.buttonRegistr = document.createElement("button")
-		this.buttonRegistr.addEventListener("click", async (e) => {
-			this.buttonRegistr.dispatchEvent(
-				new CustomEvent("updateActiveButton", { bubbles: true })
-			)
-			try {
-				this.validateInput(e)
-				const resValidate = this.checkInput(e)
-				if (resValidate === 2) await this.register()
-			} catch (error) {
-				console.error(error)
-			}
-		})
-		this.buttonRegistr.innerText = "Registration"
-		wrapButtons.append(this.buttonLogin, this.buttonRegistr)
+		const wrapButtons = createElement("div", [
+			"form__wrapper-buttons",
+			"buttons-wrapper",
+		])
+		this.buttonLogin = createElement("button", null, null, "Login", wrapButtons)
+		this.buttonRegistr = createElement(
+			"button",
+			null,
+			null,
+			"Registration",
+			wrapButtons
+		)
+		this.buttonLogin.addEventListener(
+			"click",
+			async (e) => await this.eventLogin(e)
+		)
+		this.buttonRegistr.addEventListener(
+			"click",
+			async (e) => await this.eventRegistr(e)
+		)
 		return wrapButtons
 	}
+	createSpinner() {
+		this.spinner = createElement("div", ["form__spinner", "login-spinner"])
+		createElement(
+			"span",
+			["login-spinner__span", "span-spinner"],
+			null,
+			null,
+			this.spinner
+		)
+		return this.spinner
+	}
 	render() {
-		const container = document.createElement("div")
-		container.className = "form__wrapper"
-
-		this.spinner = document.createElement("div")
-		this.spinner.classList.add("login-spinner")
-
-		const spanSpinner = document.createElement("span")
-		spanSpinner.classList.add("span-spinner")
-		this.spinner.append(spanSpinner)
-		const wrap = document.createElement("div")
-		container.append(wrap)
-		const title = document.createElement("h2")
-		title.innerText = this.title
-		this.resultErr = document.createElement("p")
-		this.resultErr.classList.add("result-err")
+		const container = createElement("div", "form__wrapper")
+		const wrap = createElement("div", "form", null, null, container)
+		createElement("h2", "form__title", null, this.title, wrap)
+		this.resultErr = createElement("p", ["form__err", "result-err"])
 		wrap.append(
-			title,
 			this.createInput("Email", "email"),
 			this.createInput("Password", "password"),
 			this.resultErr,
 			this.createButtons(),
-			this.spinner
+			this.createSpinner()
 		)
 		return container
 	}

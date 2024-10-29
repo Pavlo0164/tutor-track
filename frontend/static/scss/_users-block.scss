@@ -1,0 +1,79 @@
+.users-block {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	max-height: 80vh;
+	overflow-x: scroll;
+	border-right: 1px solid $border-color;
+	padding: 5px;
+	& > .wrap-students {
+		margin-bottom: 10px;
+		& > .one-stud {
+			padding: 10px;
+			font-size: 20px;
+			background-color: $aside-bk-color-1;
+			font-weight: 500;
+			letter-spacing: 1px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+			&:hover {
+				background-color: $aside-bk-color-2;
+			}
+			&.active-stude {
+				background-color: $active-link;
+			}
+		}
+	}
+	& > .wrap-buttons-stud {
+		display: flex;
+		gap: 5px;
+		& .button-cancel-add-student {
+			transition: all 0.2s ease;
+			opacity: 0;
+			display: none;
+			&.show-btn {
+				display: block;
+				opacity: 1;
+			}
+		}
+		& .button-add-student,
+		.button-cancel-add-student {
+			text-transform: capitalize;
+			border: 1px solid $border-color;
+			padding: 5px 10px;
+			font-weight: 500;
+			transition: all 0.3s ease;
+			background-color: $btn-bk-color-2;
+			&:hover {
+				opacity: 0.8;
+			}
+			&:active {
+				opacity: 1;
+			}
+		}
+	}
+	& .input-add-stud {
+		& .check-stud {
+			padding: 5px;
+			background-color: $btn-bk-color-1;
+		}
+		& input {
+			padding: 5px 10px;
+			border: 1px solid $border-color;
+			&:focus {
+				outline: none;
+			}
+		}
+		& > button {
+			background-color: $btn-bk-color-1;
+			transition: all 0.2s ease;
+			&:hover {
+				opacity: 0.8;
+			}
+			&:active {
+				opacity: 1;
+			}
+		}
+		display: flex;
+	}
+}
