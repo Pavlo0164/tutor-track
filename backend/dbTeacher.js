@@ -1,11 +1,22 @@
 const mongoose = require("mongoose")
-const Student = require("./dbStudent.js")
+//const Student = require("./dbStudent.js")
 const teacher = new mongoose.Schema({
+	role: { type: String, default: "tutor" },
 	id: String,
-	email: String,
-	password: String,
+	name: {
+		type: String,
+		require: true,
+	},
+	email: {
+		type: String,
+		require: true,
+	},
+	password: {
+		type: String,
+		require: true,
+	},
 	students: {
-		type: [Student],
+		type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
 		default: [],
 	},
 })

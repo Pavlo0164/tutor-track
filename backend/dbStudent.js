@@ -1,5 +1,7 @@
 const mongoose = require("mongoose")
 const student = new mongoose.Schema({
+	role: { type: String, default: "student" },
+	teacher: { type: mongoose.Schema.Types.ObjectId, ref: "Teacher" },
 	name: String,
 	surname: {
 		type: String,
@@ -54,4 +56,4 @@ const student = new mongoose.Schema({
 		default: null,
 	},
 })
-module.exports = student
+module.exports = mongoose.model("Student", student)

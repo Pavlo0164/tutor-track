@@ -78,16 +78,44 @@ h6 {
   align-items: center;
   position: relative;
 }
-.form__wrapper > .form {
+.form__wrapper .form {
   flex: 0 1 400px;
   background-color: #ededed;
   padding: 20px;
-  border-radius: 30px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0px 2px 2px #4a4a4a;
   gap: 15px;
 }
-.form__wrapper > .form > .login-spinner {
+.form__wrapper .form__underline {
+  width: 100%;
+  height: 1.5px;
+  background-color: #4a4a4a;
+  margin: 10px 0;
+}
+.form__wrapper .form__go-to-sign-up, .form__wrapper .form__go-to-login {
+  font-size: 16px;
+}
+.form__wrapper .form__link-sign-up, .form__wrapper .form__link-to-login {
+  font-weight: 500;
+  font-size: 18px;
+  color: #2a5934;
+  padding-left: 5px;
+}
+.form__wrapper .form__link-sign-up:hover, .form__wrapper .form__link-to-login:hover {
+  text-decoration: underline;
+}
+.form__wrapper .form__forgot-password {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  color: #1a2e5f;
+}
+.form__wrapper .form__forgot-password:hover {
+  text-decoration: underline;
+}
+.form__wrapper .form > .login-spinner {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -101,7 +129,7 @@ h6 {
   transition: all 0.1s ease;
   background-color: #4a4a4a;
 }
-.form__wrapper > .form > .login-spinner .span-spinner {
+.form__wrapper .form > .login-spinner .span-spinner {
   display: block;
   width: 60px;
   height: 60px;
@@ -110,7 +138,7 @@ h6 {
   border-top: 4px solid #1a1a2e;
   animation: spin 1s linear infinite;
 }
-.form__wrapper > .form > .login-spinner.active-spinner {
+.form__wrapper .form > .login-spinner.active-spinner {
   opacity: 1;
   z-index: 2;
 }
@@ -122,65 +150,66 @@ h6 {
     transform: rotate(360deg);
   }
 }
-.form__wrapper > .form h2 {
+.form__wrapper .form h2 {
   font-size: 30px;
   padding-bottom: 10px;
   color: #1a2e5f;
   border-bottom: 1px solid #c0c0c0;
 }
-.form__wrapper > .form input {
+.form__wrapper .form input {
   padding: 5px;
   border: 1px solid #c0c0c0;
   border-radius: 5px;
 }
-.form__wrapper > .form input:focus {
+.form__wrapper .form input:focus {
   border-color: #17bebb;
   outline: 1px solid #17bebb;
 }
-.form__wrapper > .form input.valid {
+.form__wrapper .form input.valid {
   border-color: #4caf50;
   outline: 1px solid #4caf50;
 }
-.form__wrapper > .form input.not-valid {
+.form__wrapper .form input.not-valid {
   border-color: #d32f2f;
   outline: 1px solid #d32f2f;
 }
-.form__wrapper > .form input::-moz-placeholder {
+.form__wrapper .form input::-moz-placeholder {
   font-family: inherit;
 }
-.form__wrapper > .form input::placeholder {
+.form__wrapper .form input::placeholder {
   font-family: inherit;
 }
-.form__wrapper > .form span {
+.form__wrapper .form span {
   font-size: 1px;
 }
-.form__wrapper > .form button {
+.form__wrapper .form button {
   transition: all 0.3s ease;
   border: 1px solid #333333;
-  border-radius: 10px;
-  padding: 8px 10px;
+  border-radius: 5px;
+  width: 100%;
+  padding: 8px 8px;
   color: #1a2e5f;
   background-color: #ff8c42;
   font-size: 20px;
 }
 @media (any-hover: hover) {
-  .form__wrapper > .form button:hover {
-    opacity: 0.6;
+  .form__wrapper .form button:hover {
+    background-color: #f47120;
   }
 }
-.form__wrapper > .form button:active {
-  opacity: 1;
+.form__wrapper .form button:active {
+  background-color: #ff8c42;
 }
-.form__wrapper > .form .input-wrapper {
+.form__wrapper .form .input-wrapper {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.form__wrapper > .form .buttons-wrapper {
+.form__wrapper .form .buttons-wrapper {
   display: flex;
   gap: 20px;
 }
-.form__wrapper > .form .result-err {
+.form__wrapper .form .result-err {
   font-weight: 300;
   color: #d32f2f;
   font-size: 14px;
@@ -188,7 +217,7 @@ h6 {
   border-radius: 5px;
   background-color: rgba(255, 107, 107, 0.5098039216);
 }
-.form__wrapper > .form span.result-input {
+.form__wrapper .form span.result-input {
   font-size: 12px;
   color: #d32f2f;
   position: relative;
@@ -207,6 +236,13 @@ h6 {
   color: #333333;
   display: flex;
   flex-direction: column;
+}
+.aside__footer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 .aside .menu__link, .aside .exit-button {
   transition: all 0.3s;
@@ -275,12 +311,13 @@ h6 {
   height: 27px;
 }
 .aside .footer-text {
-  font-size: 12px;
+  font-size: 14px;
   text-align: center;
   padding: 30px;
 }
 .aside .footer-text span {
-  color: #333333;
+  font-weight: 500;
+  color: #2e3a59;
 }
 
 .header {

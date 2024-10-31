@@ -9,7 +9,7 @@ import { Settings } from "./pages/settings/settings.js"
 import { URL } from "./config/config.js"
 class App {
 	constructor() {
-		this.auth = new Auth()
+		this.auth = new Auth("Login", "log")
 		this.main = new Main()
 		this.body = document.body
 		this.work()
@@ -17,7 +17,7 @@ class App {
 	async updateUserInfo() {
 		try {
 			const pathUrl = location.pathname
-			if (pathUrl === "/auth") return
+			if (pathUrl === "/login" || pathUrl === "/signUp") return
 			const res = await fetch(URL + "/email", {
 				method: "GET",
 				headers: {
@@ -105,9 +105,15 @@ class App {
 				},
 			},
 			{
-				path: "/auth",
+				path: "/login",
 				view: () => {
 					this.changePage(this.auth.el)
+				},
+			},
+			{
+				path: "/signUp",
+				view: () => {
+					this.changePage(new Auth("Register", "reg").el)
 				},
 			},
 		]
@@ -121,7 +127,16 @@ class App {
 		const pathUrl = location.pathname
 		const id = localStorage.getItem("id")
 		if (!id) {
-			this.changeHref("/auth")
+			switch (pathUrl) {
+				case "/login":
+				case "/signUp":
+					this.changeHref(pathUrl)
+					break
+				default:
+					this.changeHref("/login")
+					break
+			}
+
 			return
 		}
 		let check = true

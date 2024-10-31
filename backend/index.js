@@ -1,46 +1,55 @@
+require("dotenv").config()
 const express = require("express")
 const cors = require("cors")
-const path = require("path")
 const bodyParser = require("body-parser")
 const bcrypt = require("bcryptjs")
-const uuid = require("uuid")
+
 const app = express()
 const mongoose = require("mongoose")
 const Teacher = require("./dbTeacher.js")
-const { log } = require("console")
-require("dotenv").config()
-
+const Student = require("./dbStudent.js")
+const cookieParser = require("cookie-parser")
 const URI = process.env.DATABASE_URL
 const PORT = process.env.PORT || 4001
+
+const registrationService = require("./microservices/registration.js")
 mongoose
 	.connect(URI)
 	.then(() => console.log("Connected to MongoDB Atlas with Mongoose"))
 	.catch((err) => console.error("Failed to connect to MongoDB Atlas", err))
 app.use(cors())
 app.use(bodyParser.json())
-
+app.use(cookieParser())
 app.post("/registr", async (req, res) => {
 	try {
-		const { email, password } = req.body
-
-		if (!email || !password)
-			return res
-				.status(401)
-				.json({ message: "Username and password are required" })
-		const searchUser = await Teacher.findOne({ email: email })
-		if (searchUser)
-			return res.status(401).json({ message: "Username already exists" })
-		const hashedPassword = await bcrypt.hash(password, 10)
-		const id = uuid.v4()
-		const teacher = new Teacher({
-			id: id,
-			email: email,
-			password: hashedPassword,
+		const { username, email, password, confirmPassword } = req.body
+		const { status, message, teacher } =
+			await registrationService.registartionTeacher(
+				username,
+				email,
+				password,
+				confirmPassword
+			)
+		res.status(status).json({
+			id: teacher ? teacher.id : "",
+			message: message,
 		})
-		await teacher.save()
+	} catch (error) {
+		res.status(500).json({ message: "Internal server error" })
+	}
+})
+app.post("/login", async (req, res) => {
+	try {
+		const { email, password } = req.body
+		const searchUser = await Teacher.findOne({ email: email })
+		if (!searchUser)
+			return res.status(401).json({ message: "Username not exists" })
+		const checkPassword = await bcrypt.compare(password, searchUser.password)
+		if (!checkPassword)
+			return res.status(401).json({ message: "Wrong password" })
 		res.status(201).json({
-			id: id,
-			message: "User registered successfully",
+			id: searchUser.id,
+			message: "User logined successfully",
 		})
 	} catch (error) {
 		res.status(500).json({ message: "Internal server error" })
@@ -105,27 +114,6 @@ app.post("/updateInfo", async (req, res) => {
 		console.log(error.message)
 	}
 })
-app.post("/login", async (req, res) => {
-	try {
-		const { email, password } = req.body
-		if (!email || !password)
-			return res
-				.status(401)
-				.json({ message: "Username and password are required" })
-		const searchUser = await Teacher.findOne({ email: email })
-		if (!searchUser)
-			return res.status(401).json({ message: "Username not exists" })
-		const checkPassword = await bcrypt.compare(password, searchUser.password)
-		if (!checkPassword)
-			return res.status(401).json({ message: "Wrong password" })
-		res.status(201).json({
-			id: searchUser.id,
-			message: "User logined successfully",
-		})
-	} catch (error) {
-		res.status(500).json({ message: "Internal server error" })
-	}
-})
 
 app.post("/addstud", async (req, res) => {
 	try {
@@ -135,15 +123,12 @@ app.post("/addstud", async (req, res) => {
 		const findId = await Teacher.findOne({ id: id }).exec()
 		if (!findId)
 			return res.status(401).json({ message: "Teacher do not exists" })
-		if (findId.students.length !== 0) {
-			const searchStudent = findId.students.find(
-				(item) => item.name === fullName
-			)
-			if (searchStudent)
-				return res.status(401).json({ message: "Student already exists" })
-		}
-		findId.students.push({ name: fullName })
-		await findId.save()
+		const objId = findId._id
+		const student = new Student({ teacher: objId, name: fullName })
+		await student.save()
+		await Teacher.findByIdAndUpdate(objId, {
+			$addToSet: { students: student._id },
+		})
 		res.status(201).json({
 			id: id,
 			message: "User registered successfully",

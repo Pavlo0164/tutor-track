@@ -33,6 +33,7 @@ export default class Users {
 				throw new Error(`Error : ${response.status} ${response.statusText}`)
 			const children = Array.from(this.allStudents.children)
 			if (children.length !== 0) children.forEach((item) => item.remove())
+			if (!students) return
 			if (students.length > 0)
 				students.forEach((item) => {
 					const stud = createElement(

@@ -1,8 +1,13 @@
 import { URL } from "../config/config.js"
 import createElement from "../functions/create-element.js"
 export class Auth {
-	constructor() {
-		this.title = "Auth"
+	constructor(title, type) {
+		this.type = type
+		this.title = title
+		this.checkUsername = {
+			regExp: /^(?![0-9])[A-Za-z0-9_-]{3,20}$/,
+			checked: false,
+		}
 		this.checkEmail = {
 			regExp: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
 			checked: false,
@@ -11,14 +16,21 @@ export class Auth {
 			regExp: /^(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).*$/,
 			checked: false,
 		}
+		this.checkDoublPassword = {
+			checked: false,
+		}
 		this.el = this.render()
 	}
+
 	check(
+		type,
+		errText,
 		tag,
-		removeClassValid,
-		addClassValid,
-		text,
-		{ flag = "add", classChange = "result-input" }
+		removeClassValid = type ? "not-valid" : "valid",
+		addClassValid = type ? "valid" : "not-valid",
+		flag = type ? "remove" : "add",
+		classChange = "result-input",
+		text = type ? "" : errText
 	) {
 		this[tag].classList.remove(removeClassValid)
 		this[tag].classList.add(addClassValid)
@@ -26,33 +38,41 @@ export class Auth {
 		if (flag === "add") this[tag].nextElementSibling.classList.add(classChange)
 		else if (flag === "remove")
 			this[tag].nextElementSibling.classList.remove(classChange)
+		return type
 	}
-	checkInput(e) {
-		let count = 2
-		if (this.checkEmail.checked)
-			this.check("email", "not-valid", "valid", "", { flag: "remove" })
-		else {
-			this.check("email", "valid", "not-valid", "Wrong email", {
-				flag: "add",
-			})
-			count--
-		}
-		if (this.checkPassword.checked)
-			this.check("password", "not-valid", "valid", "", { flag: "remove" })
-		else {
-			this.check(
-				"password",
-				"valid",
-				"not-valid",
-				"The password must contain at least one capital letter, at least one number, and at least one special character",
-				{ flag: "add" }
+	checkInput(e, type) {
+		let count
+		if (type === "log") count = 2
+		else if (type === "reg") count = 4
+		count = this.check(this.checkEmail.checked, "Wrong email", "email")
+			? count
+			: --count
+		let passwordMessage =
+			"The password must contain at least one capital letter, at least one number, and at least one special character"
+		count = this.check(this.checkPassword.checked, passwordMessage, "password")
+			? count
+			: --count
+		if (type === "reg") {
+			count = this.check(
+				this.checkUsername.checked,
+				"Wrong user name",
+				"username"
 			)
-			count--
+				? count
+				: --count
+
+			count = this.check(
+				this.checkDoublPassword.checked,
+				passwordMessage,
+				"confirmPassword"
+			)
+				? count
+				: --count
 		}
 		return count
 	}
 	validateInput(event) {
-		const type = event.target.getAttribute("type")
+		const type = event.target.getAttribute("id")
 		if (type === "email") {
 			if (this.checkEmail.regExp.test(event.target.value))
 				this.checkEmail.checked = true
@@ -61,27 +81,17 @@ export class Auth {
 			if (this.checkPassword.regExp.test(event.target.value))
 				this.checkPassword.checked = true
 			else this.checkPassword.checked = false
+		} else if (type === "username") {
+			if (this.checkUsername.regExp.test(event.target.value))
+				this.checkUsername.checked = true
+			else this.checkUsername.checked = false
+		} else if (type === "password-doubl") {
+			if (this.checkPassword.regExp.test(event.target.value))
+				this.checkDoublPassword.checked = true
+			else this.checkDoublPassword.checked = false
 		}
 	}
-	createInput(labelInner, type) {
-		const wrap = createElement("div", ["form__wrapper-input", "input-wrapper"])
-		createElement("label", null, { for: type }, labelInner, wrap)
-		this[type] = createElement(
-			"input",
-			null,
-			{
-				type: type,
-				id: type,
-				placeholder: `Enter ${type}`,
-			},
-			null,
-			wrap
-		)
-		const result = document.createElement("span")
-		wrap.append(result)
-		this[type].addEventListener("input", (e) => this.validateInput(e))
-		return wrap
-	}
+
 	async login() {
 		try {
 			this.resultErr.innerText = ""
@@ -121,8 +131,10 @@ export class Auth {
 			this.spinner.classList.add("active-spinner")
 			this.resultErr.innerText = ""
 			const user = {
+				username: this.username.value,
 				email: this.email.value,
 				password: this.password.value,
+				confirmPassword: this.confirmPassword.value,
 			}
 			const reg = await fetch(URL + "/registr", {
 				method: "POST",
@@ -147,55 +159,70 @@ export class Auth {
 				)
 			}
 		} catch (error) {
-			console.error(error)
+			console.log(error.message)
 			this.resultErr.innerText = error.message
 		}
 	}
-	async eventLogin(e) {
-		this.buttonLogin.dispatchEvent(
-			new CustomEvent("updateActiveButton", { bubbles: true })
-		)
+	async eventLoginOrRegistr(e, type) {
+		this.validateInput(e)
+		const resValidate = this.checkInput(e, type)
+		if (resValidate !== 2 && type === "log") return
+		else if (resValidate !== 4 && type === "reg") return
 		try {
-			this.validateInput(e)
-			const resValidate = this.checkInput(e)
-			if (resValidate === 2) await this.login()
+			if (type === "log") {
+				this.buttonLogin.dispatchEvent(
+					new CustomEvent("updateActiveButton", { bubbles: true })
+				)
+				await this.login()
+			}
+			if (type === "reg") {
+				this.buttonRegistr.dispatchEvent(
+					new CustomEvent("updateActiveButton", { bubbles: true })
+				)
+				await this.register()
+			}
 		} catch (error) {
 			console.error(error)
 		}
 	}
-	async eventRegistr(e) {
-		this.buttonRegistr.dispatchEvent(
-			new CustomEvent("updateActiveButton", { bubbles: true })
-		)
-		try {
-			this.validateInput(e)
-			const resValidate = this.checkInput(e)
-			if (resValidate === 2) await this.register()
-		} catch (error) {
-			console.error(error)
-		}
-	}
-	createButtons() {
+
+	createButtons(type) {
 		const wrapButtons = createElement("div", [
 			"form__wrapper-buttons",
 			"buttons-wrapper",
 		])
-		this.buttonLogin = createElement("button", null, null, "Login", wrapButtons)
-		this.buttonRegistr = createElement(
-			"button",
-			null,
-			null,
-			"Registration",
-			wrapButtons
-		)
-		this.buttonLogin.addEventListener(
-			"click",
-			async (e) => await this.eventLogin(e)
-		)
-		this.buttonRegistr.addEventListener(
-			"click",
-			async (e) => await this.eventRegistr(e)
-		)
+		if (type === "log") {
+			this.buttonLogin = createElement(
+				"button",
+				null,
+				null,
+				"Login",
+				wrapButtons
+			)
+
+			this.buttonLogin.addEventListener("click", async (e) => {
+				try {
+					await this.eventLoginOrRegistr(e, "log")
+				} catch (err) {
+					//console.log(err.message)
+				}
+			})
+		} else if (type === "reg") {
+			this.buttonRegistr = createElement(
+				"button",
+				null,
+				null,
+				"Sign Up",
+				wrapButtons
+			)
+			this.buttonRegistr.addEventListener("click", async (e) => {
+				try {
+					await this.eventLoginOrRegistr(e, "reg")
+				} catch (err) {
+					console.log(err)
+				}
+			})
+		}
 		return wrapButtons
 	}
 	createSpinner() {
@@ -209,18 +236,95 @@ export class Auth {
 		)
 		return this.spinner
 	}
+	createInput(labelInner, type, id, name) {
+		const wrap = createElement("div", ["form__wrapper-input", "input-wrapper"])
+		createElement("label", null, { for: id || type }, labelInner, wrap)
+		this[name] = createElement(
+			"input",
+			null,
+			{
+				type: type,
+				id: id || type,
+				placeholder: `Enter ${type}`,
+			},
+			null,
+			wrap
+		)
+		const result = document.createElement("span")
+		wrap.append(result)
+		this[name].addEventListener("input", (e) => this.validateInput(e))
+		return wrap
+	}
 	render() {
 		const container = createElement("div", "form__wrapper")
-		const wrap = createElement("div", "form", null, null, container)
-		createElement("h2", "form__title", null, this.title, wrap)
+		this.wrap = createElement("div", "form", null, null, container)
+		createElement("h2", "form__title", null, this.title, this.wrap)
 		this.resultErr = createElement("p", ["form__err", "result-err"])
-		wrap.append(
-			this.createInput("Email", "email"),
-			this.createInput("Password", "password"),
-			this.resultErr,
-			this.createButtons(),
-			this.createSpinner()
-		)
+
+		if (this.type === "log") {
+			this.forgotPassword = createElement(
+				"a",
+				"form__forgot-password",
+				{ href: "/#" },
+				"Forgot Password?"
+			)
+			const goSignUP = createElement(
+				"div",
+				"form__go-to-sign-up",
+				null,
+				"New to Tutor Track?"
+			)
+			const linkGoSignUp = createElement(
+				"a",
+				"form__link-sign-up",
+				{
+					href: "/signUp",
+				},
+				"Create an account",
+				goSignUP
+			)
+			this.wrap.append(
+				this.createInput("Email", "email", null, "email"),
+				this.createInput("Password", "password", null, "password"),
+				this.resultErr,
+				this.createButtons(this.type),
+				this.forgotPassword,
+				createElement("div", "form__underline"),
+				goSignUP,
+				this.createSpinner()
+			)
+		} else if (this.type === "reg") {
+			const goToLogin = createElement(
+				"div",
+				"form__go-to-login",
+				null,
+				"Already have an account?"
+			)
+			const linkGoToLogin = createElement(
+				"a",
+				"form__link-to-login",
+				{ href: "/login" },
+				"Sign in",
+				goToLogin
+			)
+			this.wrap.append(
+				this.createInput("Username", "text", "username", "username"),
+				this.createInput("Email", "email", null, "email"),
+				this.createInput("Password", "password", null, "password"),
+				this.createInput(
+					"Confirm Password",
+					"password",
+					"password-doubl",
+					"confirmPassword"
+				),
+				this.resultErr,
+				this.createButtons(this.type),
+				createElement("div", "form__underline"),
+				goToLogin,
+				this.createSpinner()
+			)
+		}
+
 		return container
 	}
 }
