@@ -4,6 +4,7 @@ const cors = require("cors")
 const bodyParser = require("body-parser")
 const bcrypt = require("bcryptjs")
 
+//const crypto = require("crypto")
 const app = express()
 const mongoose = require("mongoose")
 const Teacher = require("./dbTeacher.js")
@@ -17,6 +18,7 @@ mongoose
 	.connect(URI)
 	.then(() => console.log("Connected to MongoDB Atlas with Mongoose"))
 	.catch((err) => console.error("Failed to connect to MongoDB Atlas", err))
+
 app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -69,17 +71,9 @@ app.get("/checkId", async (req, res) => {
 app.delete("/deleteStudent", async (req, res) => {
 	try {
 		const { userid, id } = req.headers
-
-		const teacher = await Teacher.findOne({ id: id })
-
-		if (!teacher) res.status(404).json({ message: "Teacher doesn`t exist" })
-		const student = teacher.students.find((el) => el._id.equals(userid))
-
+		const student = await Student.findByIdAndDelete({ _id: userid })
+		await student.save()
 		if (!student) res.status(404).json({ message: "User doesn`t exists" })
-		teacher.students = teacher.students.filter((el) => !el._id.equals(userid))
-		console.log(teacher.students)
-
-		await teacher.save()
 		res.status(200).end()
 	} catch (error) {
 		console.log(error)
@@ -91,7 +85,7 @@ app.get("/userInfo", async (req, res) => {
 		const check = await Teacher.findOne({ id: id })
 		if (!check) res.status(404).json({ message: "Teacher does not exist" })
 		else {
-			const student = check.students.find((el) => el._id.equals(userid))
+			const student = await Student.findOne({ _id: userid })
 			if (!student) res.status(404).json({ message: "Student does not exist" })
 			else res.status(201).json({ student: student })
 		}
@@ -102,13 +96,10 @@ app.get("/userInfo", async (req, res) => {
 app.post("/updateInfo", async (req, res) => {
 	try {
 		const userID = req.headers.userid
-		const id = req.headers.id
-		const teacher = await Teacher.findOne({ id: id })
-		if (!teacher) res.status(404).json({ message: "Teacher does not exist" })
-		const student = teacher.students.find((el) => el._id.equals(userID))
+		const student = await Student.findOne({ _id: userID })
 		if (!student) res.status(404).json({ message: "Student does not exist" })
 		Object.assign(student, req.body)
-		await teacher.save()
+		await student.save()
 		res.status(204).end()
 	} catch (error) {
 		console.log(error.message)
@@ -141,11 +132,13 @@ app.get("/student", async (req, res) => {
 	try {
 		const { auth } = req.headers
 		const searchId = await Teacher.findOne({ id: auth })
-		const student = searchId.students
+		const student = await Student.find({ teacher: searchId })
 		if (student.length === 0)
 			return res.status(201).json({ message: "You do not have any student" })
 		else res.status(200).json({ students: [...student] })
-	} catch (error) {}
+	} catch (error) {
+		console.log(error.message)
+	}
 })
 app.get("/email", async (req, res) => {
 	try {

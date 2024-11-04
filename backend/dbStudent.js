@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const student = new mongoose.Schema({
-	role: { type: String, default: "student" },
+	role: { type: String, default: "Student" },
 	teacher: { type: mongoose.Schema.Types.ObjectId, ref: "Teacher" },
 	name: String,
 	surname: {

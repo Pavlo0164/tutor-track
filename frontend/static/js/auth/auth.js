@@ -239,7 +239,7 @@ export class Auth {
 	createInput(labelInner, type, id, name) {
 		const wrap = createElement("div", ["form__wrapper-input", "input-wrapper"])
 		createElement("label", null, { for: id || type }, labelInner, wrap)
-		this[name] = createElement(
+		const input = (this[name] = createElement(
 			"input",
 			null,
 			{
@@ -249,7 +249,8 @@ export class Auth {
 			},
 			null,
 			wrap
-		)
+		))
+
 		const result = document.createElement("span")
 		wrap.append(result)
 		this[name].addEventListener("input", (e) => this.validateInput(e))

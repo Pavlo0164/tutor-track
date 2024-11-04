@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
-//const Student = require("./dbStudent.js")
 const teacher = new mongoose.Schema({
-	role: { type: String, default: "tutor" },
+	role: { type: String, default: "Teacher" },
 	id: String,
 	name: {
 		type: String,
