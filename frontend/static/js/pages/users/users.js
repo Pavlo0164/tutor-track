@@ -21,7 +21,7 @@ export default class Users {
 	async updateShowStudents() {
 		try {
 			const id = localStorage.getItem("id")
-			const response = await fetch(URL + "/student", {
+			const response = await fetch(URL + "/student/infoAll", {
 				method: "GET",
 				headers: {
 					auth: id,
@@ -64,8 +64,8 @@ export default class Users {
 		try {
 			if (this.regExpCheckName.test(this.input.value)) {
 				const id = localStorage.getItem("id")
-				const newStud = await fetch(URL + "/addstud", {
-					method: "POST",
+				const newStud = await fetch(URL + "/student/create", {
+					method: "PUT",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
 						fullName: this.input.value,

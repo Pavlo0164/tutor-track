@@ -1,11 +1,11 @@
 require("dotenv").config()
 const bcrypt = require("bcryptjs")
-const uuid = require("uuid")
 const Teacher = require("../dbTeacher.js")
 const jwt = require("jsonwebtoken")
 const RefreshToken = require("../dbRefreshToken.js")
+
 class RegistrationService {
-	createRefreshToken(username, email, role, id, timeOfLife) {
+	createJwtToken(username, email, role, id, timeOfLife) {
 		return jwt.sign({ username, email, role, id }, process.env.PRIVATE_KEY, {
 			expiresIn: timeOfLife,
 		})
@@ -17,20 +17,26 @@ class RegistrationService {
 			const teacher = await Teacher.findOne({ email })
 			if (teacher) return { status: 401, message: "Username already exists" }
 			const hashedPassword = await bcrypt.hash(password, 10)
-			const id = uuid.v4()
+
 			const newTeacher = await Teacher.create({
-				id: id,
 				name: username,
 				email: email,
 				password: hashedPassword,
 			})
 			await newTeacher.save()
-			const refreshToken = this.createRefreshToken(
+			const refreshToken = this.createJwtToken(
 				username,
 				email,
 				newTeacher.role,
-				id,
+				newTeacher._id,
 				"90d"
+			)
+			const accessToken = this.createJwtToken(
+				username,
+				email,
+				newTeacher.role,
+				newTeacher._id,
+				"30m"
 			)
 			const newRefreshToken = await RefreshToken.create({
 				token: refreshToken,
@@ -42,6 +48,43 @@ class RegistrationService {
 				status: 201,
 				message: "Teacher successfully created",
 				teacher: newTeacher,
+				accessToken: accessToken,
+			}
+		} catch (err) {
+			console.log(err)
+		}
+	}
+	async loginTeacher(emailTeacher, passwordUser) {
+		try {
+			const { name, email, role, _id, password } = await Teacher.findOne({
+				email: emailTeacher,
+			})
+			if (!name)
+				return {
+					status: 401,
+					message: "Username not exists",
+				}
+			const checkPassword = await bcrypt.compare(passwordUser, password)
+			if (!checkPassword) return { status: 401, message: "Wrong password" }
+
+			const refreshToken = await RefreshToken.findOne({ userId: _id })
+			const newRefreshToken = this.createJwtToken(name, email, role, _id, "90d")
+			const newAccessToken = this.createJwtToken(name, email, role, _id, "30m")
+			if (refreshToken) {
+				refreshToken.token = newRefreshToken
+				await refreshToken.save()
+			} else {
+				const newRefreshToken = await RefreshToken.create({
+					token: newRefreshToken,
+					userType: role,
+					userId: _id,
+				})
+				await newRefreshToken.save()
+			}
+			return {
+				status: 200,
+				message: "Login is successfull",
+				accessToken: newAccessToken,
 			}
 		} catch (err) {
 			console.log(err)

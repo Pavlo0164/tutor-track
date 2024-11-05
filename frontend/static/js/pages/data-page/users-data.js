@@ -23,7 +23,7 @@ export default class UserData {
 		const userId = this.id
 		const id = localStorage.getItem("id")
 		try {
-			const res = await fetch(URL + "/userInfo", {
+			const res = await fetch(URL + "/student/infoOne", {
 				method: "GET",
 				headers: {
 					userid: userId,
@@ -89,7 +89,7 @@ export default class UserData {
 		})
 		btnDeleteStud.addEventListener("click", async (e) => {
 			this.popUp.classList.remove("active-popup")
-			const deleteStud = await fetch(URL + "/deleteStudent", {
+			const deleteStud = await fetch(URL + "/student/delete", {
 				method: "DELETE",
 				headers: {
 					userid: userId,
@@ -117,7 +117,7 @@ export default class UserData {
 					updatedData[key] = value
 				})
 				const id = localStorage.getItem("id")
-				const sendData = await fetch(URL + "/updateInfo", {
+				const sendData = await fetch(URL + "/update", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",

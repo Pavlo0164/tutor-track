@@ -91,7 +91,6 @@ export class Auth {
 			else this.checkDoublPassword.checked = false
 		}
 	}
-
 	async login() {
 		try {
 			this.resultErr.innerText = ""
@@ -100,7 +99,7 @@ export class Auth {
 				email: this.email.value,
 				password: this.password.value,
 			}
-			const reg = await fetch(URL + "/login", {
+			const reg = await fetch(URL + "/auth/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -115,7 +114,9 @@ export class Auth {
 			}
 			if (reg.ok) {
 				const result = await reg.json()
-				localStorage.setItem("id", result.id)
+				console.log(result.accessToken)
+
+				sessionStorage.setItem("accessToken", result.accessToken)
 				this.el.dispatchEvent(
 					new CustomEvent("register", {
 						bubbles: true,
@@ -136,7 +137,7 @@ export class Auth {
 				password: this.password.value,
 				confirmPassword: this.confirmPassword.value,
 			}
-			const reg = await fetch(URL + "/registr", {
+			const reg = await fetch(URL + "/auth/registr", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -151,7 +152,7 @@ export class Auth {
 			}
 			if (reg.ok) {
 				const result = await reg.json()
-				localStorage.setItem("id", result.id)
+				sessionStorage.setItem("accessToken", result.accessToken)
 				this.el.dispatchEvent(
 					new CustomEvent("register", {
 						bubbles: true,
