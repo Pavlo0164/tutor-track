@@ -6,8 +6,6 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const bodyParser = require("body-parser")
 
-
-
 const mongoose = require("mongoose")
 const Teacher = require("./dbTeacher.js")
 
@@ -32,17 +30,12 @@ app.use("/student", studentRouter)
 app.use("/auth", authRouter)
 
 app.get("/email", CheckAuth.checkToken, (req, res) => {
-	try {
-		const { username, email, role, id } = req.user
-		res.status(200).json({ email: email, name: username })
-	} catch (error) {}
+	const { username, email, role, id } = req.user
+	res.status(200).json({ email: email, name: username })
 })
 app.get("/checkToken", CheckAuth.checkToken, (req, res) => {
-	try {
-		res.status(200).end()
-	} catch (error) {
-		console.log(error)
-	}
+  
+	res.status(200).end()
 })
 
 app.listen(PORT, () => console.log("Server started...."))

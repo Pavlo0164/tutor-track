@@ -107,15 +107,12 @@ export class Auth {
 				body: JSON.stringify(user),
 			})
 			this.spinner.classList.remove("active-spinner")
+			const result = await reg.json()
 			if (reg.status === 401) {
-				const result = await reg.json()
 				this.resultErr.innerText = result.message
 				return
 			}
 			if (reg.ok) {
-				const result = await reg.json()
-				console.log(result.accessToken)
-
 				sessionStorage.setItem("accessToken", result.accessToken)
 				this.el.dispatchEvent(
 					new CustomEvent("register", {
@@ -145,13 +142,12 @@ export class Auth {
 				body: JSON.stringify(user),
 			})
 			this.spinner.classList.remove("active-spinner")
+			const result = await reg.json()
 			if (reg.status === 401) {
-				const result = await reg.json()
 				this.resultErr.innerText = result.message
 				return
 			}
 			if (reg.ok) {
-				const result = await reg.json()
 				sessionStorage.setItem("accessToken", result.accessToken)
 				this.el.dispatchEvent(
 					new CustomEvent("register", {

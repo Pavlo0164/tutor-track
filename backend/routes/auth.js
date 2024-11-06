@@ -7,6 +7,7 @@ route.post("/login", async (req, res) => {
 		const { email, password } = req.body
 		const { status, message, accessToken } =
 			await registrationService.loginTeacher(email, password)
+		console.log(status)
 
 		res.status(status).json({
 			message: message,

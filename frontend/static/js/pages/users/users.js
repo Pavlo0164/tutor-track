@@ -20,11 +20,11 @@ export default class Users {
 	}
 	async updateShowStudents() {
 		try {
-			const id = localStorage.getItem("id")
+			const accessToken = sessionStorage.getItem("accessToken")
 			const response = await fetch(URL + "/student/infoAll", {
 				method: "GET",
 				headers: {
-					auth: id,
+					accessToken: accessToken,
 				},
 			})
 			const body = await response.json()
@@ -74,8 +74,9 @@ export default class Users {
 						fullName: this.input.value,
 					}),
 				})
-				if (newStud.status.ok) {
-				}
+				// if (newStud.ok) {
+
+				// }
 				this.input.parentElement.remove()
 				this.inputAlive = false
 				await this.updateShowStudents()

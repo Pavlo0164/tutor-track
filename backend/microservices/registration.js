@@ -56,28 +56,40 @@ class RegistrationService {
 	}
 	async loginTeacher(emailTeacher, passwordUser) {
 		try {
-			const { name, email, role, _id, password } = await Teacher.findOne({
+			const teacher = await Teacher.findOne({
 				email: emailTeacher,
 			})
-			if (!name)
+			if (!teacher)
 				return {
 					status: 401,
 					message: "Username not exists",
 				}
-			const checkPassword = await bcrypt.compare(passwordUser, password)
+			const checkPassword = await bcrypt.compare(passwordUser, teacher.password)
 			if (!checkPassword) return { status: 401, message: "Wrong password" }
 
-			const refreshToken = await RefreshToken.findOne({ userId: _id })
-			const newRefreshToken = this.createJwtToken(name, email, role, _id, "90d")
-			const newAccessToken = this.createJwtToken(name, email, role, _id, "30m")
+			const refreshToken = await RefreshToken.findOne({ userId: teacher._id })
+			const newRefreshToken = this.createJwtToken(
+				teacher.name,
+				teacher.email,
+				teacher.role,
+				teacher._id,
+				"90d"
+			)
+			const newAccessToken = this.createJwtToken(
+				teacher.name,
+				teacher.email,
+				teacher.role,
+				teacher._id,
+				"30m"
+			)
 			if (refreshToken) {
 				refreshToken.token = newRefreshToken
 				await refreshToken.save()
 			} else {
 				const newRefreshToken = await RefreshToken.create({
 					token: newRefreshToken,
-					userType: role,
-					userId: _id,
+					userType: teacher.role,
+					userId: teacher._id,
 				})
 				await newRefreshToken.save()
 			}

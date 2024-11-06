@@ -21,13 +21,13 @@ export default class UserData {
 	}
 	async getInfoAboutStudent() {
 		const userId = this.id
-		const id = localStorage.getItem("id")
+		const accessToken = sessionStorage.getItem("accessToken")
 		try {
 			const res = await fetch(URL + "/student/infoOne", {
 				method: "GET",
 				headers: {
 					userid: userId,
-					id: id,
+					accessToken: accessToken,
 				},
 			})
 
@@ -93,12 +93,11 @@ export default class UserData {
 				method: "DELETE",
 				headers: {
 					userid: userId,
-					id: localStorage.getItem("id"),
+					accessToken: sessionStorage.getItem("accessToken"),
 				},
 			})
-			if (deleteStud.status === 200) {
+			if (deleteStud.ok)
 				wrap.dispatchEvent(new CustomEvent("deleteStudent", { bubbles: true }))
-			}
 		})
 		this.popUp.append(wrapperPopup)
 		wrap.addEventListener("reset", async (e) => {
@@ -116,17 +115,17 @@ export default class UserData {
 				formData.forEach((value, key) => {
 					updatedData[key] = value
 				})
-				const id = localStorage.getItem("id")
-				const sendData = await fetch(URL + "/update", {
+				const accessToken = sessionStorage.getItem("accessToken")
+				const sendData = await fetch(URL + "/student/update", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 						userid: userId,
-						id: id,
+						accessToken: accessToken,
 					},
 					body: JSON.stringify(updatedData),
 				})
-				if (sendData.status === 204) {
+				if (sendData.ok) {
 					this.successfullUpdate.classList.add("show-update")
 					setTimeout(() => {
 						this.successfullUpdate.classList.remove("show-update")

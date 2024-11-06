@@ -21,7 +21,7 @@ class App {
 			const res = await fetch(URL + "/email", {
 				method: "GET",
 				headers: {
-					id: localStorage.getItem("id"),
+					accessToken: sessionStorage.getItem("accessToken"),
 				},
 			})
 			if (res.ok) {
@@ -126,7 +126,8 @@ class App {
 
 	async checkAuth() {
 		const pathUrl = location.pathname
-		const accessToken = sessionStoragee.getItem("accessToken")
+		const accessToken = sessionStorage.getItem("accessToken")
+
 		if (!accessToken) {
 			switch (pathUrl) {
 				case "/login":
@@ -140,10 +141,10 @@ class App {
 			return
 		}
 		try {
-			const res = await fetch(URL + "/checkTocken", {
+			const res = await fetch(URL + "/checkToken", {
 				method: "GET",
 				headers: {
-					accessToken: accessToken,
+					authorization: `Bearer ${accessToken}`,
 				},
 			})
 			if (!res.ok) this.changeHref("/login")
@@ -172,7 +173,9 @@ class App {
 	async work() {
 		try {
 			await this.checkAuth()
-			this.body.addEventListener("register", async () => await this.checkAuth())
+			this.body.addEventListener("register", async () => {
+				await this.checkAuth()
+			})
 			this.body.addEventListener("exit", async () => {
 				this.auth.password.value = ""
 				this.auth.email.value = ""
