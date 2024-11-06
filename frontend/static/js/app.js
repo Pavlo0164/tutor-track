@@ -123,10 +123,11 @@ class App {
 		}
 		searchLink.view()
 	}
+
 	async checkAuth() {
 		const pathUrl = location.pathname
-		const id = localStorage.getItem("id")
-		if (!id) {
+		const accessToken = sessionStoragee.getItem("accessToken")
+		if (!accessToken) {
 			switch (pathUrl) {
 				case "/login":
 				case "/signUp":
@@ -136,37 +137,32 @@ class App {
 					this.changeHref("/login")
 					break
 			}
-
 			return
 		}
-		let check = true
-		if (id) {
-			try {
-				const res = await fetch(URL + "/checkId", {
-					method: "GET",
-					headers: {
-						id: id,
-					},
-				})
-				check = res.ok
-			} catch (error) {
-				console.log(error.message)
-				check = false
-			}
-		}
-		if (!check) return
-		switch (pathUrl) {
-			case "/home":
-			case "/data":
-			case "/pay":
-			case "/settings":
-			case "/schedule":
-			case "/plan":
-				this.changeHref(pathUrl)
-				break
-			default:
-				this.changeHref("/home")
-				break
+		try {
+			const res = await fetch(URL + "/checkTocken", {
+				method: "GET",
+				headers: {
+					accessToken: accessToken,
+				},
+			})
+			if (!res.ok) this.changeHref("/login")
+			else
+				switch (pathUrl) {
+					case "/home":
+					case "/data":
+					case "/pay":
+					case "/settings":
+					case "/schedule":
+					case "/plan":
+						this.changeHref(pathUrl)
+						break
+					default:
+						this.changeHref("/home")
+						break
+				}
+		} catch (error) {
+			console.log(error.message)
 		}
 	}
 	changePage(elem) {

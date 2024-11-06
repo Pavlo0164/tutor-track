@@ -205,7 +205,7 @@ export class Auth {
 				try {
 					await this.eventLoginOrRegistr(e, "log")
 				} catch (err) {
-					//console.log(err.message)
+					console.log(err.message)
 				}
 			})
 		} else if (type === "reg") {

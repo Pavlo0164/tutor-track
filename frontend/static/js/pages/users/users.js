@@ -63,16 +63,18 @@ export default class Users {
 	async createNewStudents() {
 		try {
 			if (this.regExpCheckName.test(this.input.value)) {
-				const id = localStorage.getItem("id")
+				const accessToken = sessionStorage.getItem("accessToken")
 				const newStud = await fetch(URL + "/student/create", {
 					method: "PUT",
-					headers: { "Content-Type": "application/json" },
+					headers: {
+						"Content-Type": "application/json",
+						accessToken: accessToken,
+					},
 					body: JSON.stringify({
 						fullName: this.input.value,
-						id: id,
 					}),
 				})
-				if (newStud.status === 201) {
+				if (newStud.status.ok) {
 				}
 				this.input.parentElement.remove()
 				this.inputAlive = false
