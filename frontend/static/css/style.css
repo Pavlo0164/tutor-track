@@ -73,6 +73,7 @@ h6 {
 .form__wrapper {
   background-color: #faf9f6;
   min-height: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -300,7 +301,6 @@ h6 {
   align-items: flex-start;
   font-size: 25px;
   gap: 5px;
-  padding: 3px 20px;
   width: 100%;
 }
 .aside .exit-button::before {
@@ -567,9 +567,19 @@ h6 {
 body {
   font-family: "Poppins", sans-serif;
   color: #4a4a4a;
+  display: flex;
+}
+
+.wrapper {
+  flex-grow: 1;
+  min-height: 100%;
+  max-height: 100%;
+  width: 100%;
+  display: flex;
 }
 
 .main-wrapper {
+  flex-grow: 1;
   position: relative;
   min-height: 100%;
   max-height: 100%;

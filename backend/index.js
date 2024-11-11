@@ -30,11 +30,10 @@ app.use("/student", studentRouter)
 app.use("/auth", authRouter)
 
 app.get("/email", CheckAuth.checkToken, (req, res) => {
-	const { username, email, role, id } = req.user
+	const { username, email } = req.user
 	res.status(200).json({ email: email, name: username })
 })
 app.get("/checkToken", CheckAuth.checkToken, (req, res) => {
-  
 	res.status(200).end()
 })
 

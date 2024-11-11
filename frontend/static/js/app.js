@@ -6,29 +6,27 @@ import { Pay } from "./pages/pay/pay.js"
 import { Plan } from "./pages/plan/plan.js"
 import { Schedule } from "./pages/schedule/schedule.js"
 import { Settings } from "./pages/settings/settings.js"
-import { URL } from "./config/config.js"
+
+import { checkAuth, getUserInfo } from "./api/api.js"
 class App {
 	constructor() {
 		this.auth = new Auth("Login", "log")
 		this.main = new Main()
-		this.body = document.body
+		this.body = document.querySelector(".wrapper")
 		this.work()
 	}
 	async updateUserInfo() {
 		try {
 			const pathUrl = location.pathname
-			if (pathUrl === "/login" || pathUrl === "/signUp") return
-			const res = await fetch(URL + "/email", {
-				method: "GET",
-				headers: {
-					accessToken: sessionStorage.getItem("accessToken"),
-				},
-			})
-			if (res.ok) {
-				const body = await res.json()
-				if (body.name) this.main.header.changeUserName(body.name)
-				this.main.header.changeUserEmail(body.email)
-			} else throw new Error(`Error ${res.status} ${res.statusText}`)
+			const accessToken = sessionStorage.getItem("accessToken")
+			if (pathUrl !== "/login" && pathUrl !== "/signUp" && accessToken) {
+				const { status, statusText, name, email } = await getUserInfo(
+					accessToken
+				)
+				if (!name) throw new Error(`Error ${status} ${statusText}`)
+				this.main.header.changeUserName(name)
+				this.main.header.changeUserEmail(email)
+			}
 		} catch (error) {
 			console.log(error.message)
 		}
@@ -123,31 +121,29 @@ class App {
 		}
 		searchLink.view()
 	}
-
+	switchFunc(pathUrl) {
+		switch (pathUrl) {
+			case "/login":
+				this.changeHref("/login")
+				break
+			case "/signUp":
+				this.changeHref("/signUp")
+				break
+			default:
+				this.changeHref("/login")
+		}
+	}
 	async checkAuth() {
 		const pathUrl = location.pathname
 		const accessToken = sessionStorage.getItem("accessToken")
-
-		if (!accessToken) {
-			switch (pathUrl) {
-				case "/login":
-				case "/signUp":
-					this.changeHref(pathUrl)
-					break
-				default:
-					this.changeHref("/login")
-					break
-			}
-			return
-		}
 		try {
-			const res = await fetch(URL + "/checkToken", {
-				method: "GET",
-				headers: {
-					authorization: `Bearer ${accessToken}`,
-				},
-			})
-			if (!res.ok) this.changeHref("/login")
+			if (!accessToken) {
+				
+				this.switchFunc(pathUrl)
+				return
+			}
+			const res = await checkAuth(accessToken)
+			if (!res.ok) this.switchFunc(pathUrl)
 			else
 				switch (pathUrl) {
 					case "/home":
@@ -163,12 +159,12 @@ class App {
 						break
 				}
 		} catch (error) {
-			console.log(error.message)
+			console.log(error)
 		}
 	}
 	changePage(elem) {
 		if (this.body.firstElementChild) this.body.firstElementChild.remove()
-		this.body.append(elem)
+		this.body.prepend(elem)
 	}
 	async work() {
 		try {
@@ -182,7 +178,7 @@ class App {
 				await this.checkAuth()
 			})
 		} catch (error) {
-			console.log(error.message)
+			console.log(error)
 		}
 		this.body.addEventListener("click", (e) => this.routeToPage(e))
 		window.addEventListener("popstate", (e) => this.route())

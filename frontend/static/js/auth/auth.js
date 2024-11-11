@@ -1,5 +1,5 @@
-import { URL } from "../config/config.js"
 import createElement from "../functions/create-element.js"
+import { login, registr } from "../api/api.js"
 export class Auth {
 	constructor(title, type) {
 		this.type = type
@@ -99,27 +99,17 @@ export class Auth {
 				email: this.email.value,
 				password: this.password.value,
 			}
-			const reg = await fetch(URL + "/auth/login", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(user),
-			})
+			const result = await login(user)
 			this.spinner.classList.remove("active-spinner")
-			const result = await reg.json()
-			if (reg.status === 401) {
+			if (result.status >= 400) {
 				this.resultErr.innerText = result.message
 				return
 			}
-			if (reg.ok) {
-				sessionStorage.setItem("accessToken", result.accessToken)
-				this.el.dispatchEvent(
-					new CustomEvent("register", {
-						bubbles: true,
-					})
-				)
-			}
+			this.el.dispatchEvent(
+				new CustomEvent("register", {
+					bubbles: true,
+				})
+			)
 		} catch (error) {
 			console.error(error.message)
 		}
@@ -134,27 +124,17 @@ export class Auth {
 				password: this.password.value,
 				confirmPassword: this.confirmPassword.value,
 			}
-			const reg = await fetch(URL + "/auth/registr", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(user),
-			})
+			const reg = await registr(user)
 			this.spinner.classList.remove("active-spinner")
-			const result = await reg.json()
-			if (reg.status === 401) {
-				this.resultErr.innerText = result.message
+			if (reg.status >= 300) {
+				this.resultErr.innerText = reg.message
 				return
 			}
-			if (reg.ok) {
-				sessionStorage.setItem("accessToken", result.accessToken)
-				this.el.dispatchEvent(
-					new CustomEvent("register", {
-						bubbles: true,
-					})
-				)
-			}
+			this.el.dispatchEvent(
+				new CustomEvent("register", {
+					bubbles: true,
+				})
+			)
 		} catch (error) {
 			console.log(error.message)
 			this.resultErr.innerText = error.message

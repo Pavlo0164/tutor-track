@@ -31,6 +31,7 @@ class RegistrationService {
 				newTeacher._id,
 				"90d"
 			)
+			const hashedRefreshToken = await bcrypt.hash(refreshToken, 10)
 			const accessToken = this.createJwtToken(
 				username,
 				email,
@@ -39,7 +40,7 @@ class RegistrationService {
 				"30m"
 			)
 			const newRefreshToken = await RefreshToken.create({
-				token: refreshToken,
+				token: hashedRefreshToken,
 				userType: newTeacher.role,
 				userId: newTeacher._id,
 			})
@@ -49,6 +50,7 @@ class RegistrationService {
 				message: "Teacher successfully created",
 				teacher: newTeacher,
 				accessToken: accessToken,
+				refreshToken: refreshToken,
 			}
 		} catch (err) {
 			console.log(err)
@@ -66,7 +68,6 @@ class RegistrationService {
 				}
 			const checkPassword = await bcrypt.compare(passwordUser, teacher.password)
 			if (!checkPassword) return { status: 401, message: "Wrong password" }
-
 			const refreshToken = await RefreshToken.findOne({ userId: teacher._id })
 			const newRefreshToken = this.createJwtToken(
 				teacher.name,
@@ -75,6 +76,7 @@ class RegistrationService {
 				teacher._id,
 				"90d"
 			)
+			const hashedRefreshToken = await bcrypt.hash(newRefreshToken, 10)
 			const newAccessToken = this.createJwtToken(
 				teacher.name,
 				teacher.email,
@@ -83,11 +85,11 @@ class RegistrationService {
 				"30m"
 			)
 			if (refreshToken) {
-				refreshToken.token = newRefreshToken
+				refreshToken.token = hashedRefreshToken
 				await refreshToken.save()
 			} else {
 				const newRefreshToken = await RefreshToken.create({
-					token: newRefreshToken,
+					token: hashedRefreshToken,
 					userType: teacher.role,
 					userId: teacher._id,
 				})
@@ -97,6 +99,7 @@ class RegistrationService {
 				status: 200,
 				message: "Login is successfull",
 				accessToken: newAccessToken,
+				refreshToken: newRefreshToken,
 			}
 		} catch (err) {
 			console.log(err)

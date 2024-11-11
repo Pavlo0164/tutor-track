@@ -1,5 +1,9 @@
-import { URL } from "../../config/config.js"
 import createElement from "../../functions/create-element.js"
+import {
+	getOneStudent,
+	deleteStudent,
+	updateStudentInfo,
+} from "../../api/api.js"
 export default class UserData {
 	constructor(type, id = null) {
 		this.id = id
@@ -7,46 +11,34 @@ export default class UserData {
 		this.init(this.id)
 	}
 	async init(id) {
-		if (id) {
-			try {
-				const { details, userId } = await this.getInfoAboutStudent()
-				if (details.student) {
-					this.wrap.innerText = ""
-					this.wrap.append(this.createInfoPage(details.student, userId))
-				} else this.wrap.innerText = "Student information is not available"
-			} catch (error) {
-				this.wrap.innerText = "Error loading student information"
-			}
+		if (!id) return
+		try {
+			const { data, userId } = await this.getInfoAboutStudent()
+			if (data) {
+				this.wrap.innerText = ""
+				this.wrap.append(this.createInfoPage(data.student, userId))
+			} else this.wrap.innerText = "Student information is not available"
+		} catch (error) {
+			this.wrap.innerText = "Error loading student information"
 		}
 	}
 	async getInfoAboutStudent() {
 		const userId = this.id
 		const accessToken = sessionStorage.getItem("accessToken")
 		try {
-			const res = await fetch(URL + "/student/infoOne", {
-				method: "GET",
-				headers: {
-					userid: userId,
-					accessToken: accessToken,
-				},
-			})
-
-			if (res.ok) {
-				const details = await res.json()
-				return { details, userId }
-			}
+			return await getOneStudent(accessToken, userId)
 		} catch (error) {
 			console.log(error.message)
-			throw new Error(`Error what happend`)
 		}
 	}
 	createInput(type, labelValue, value = null, name) {
 		const wrap = createElement("div", "input-student-wrap")
-		createElement("label", null, null, labelValue, wrap)
+		createElement("label", null, { for: name }, labelValue, wrap)
+
 		const input = createElement(
 			"input",
 			null,
-			{ type: type, name: name },
+			{ type: type, name: name, id: name },
 			null,
 			wrap
 		)
@@ -79,7 +71,6 @@ export default class UserData {
 			"Cancel",
 			wrapButtonPopUp
 		)
-
 		wrapperPopup.append(
 			createElement("div", null, null, "Do you want to delete the student?"),
 			wrapButtonPopUp
@@ -89,14 +80,9 @@ export default class UserData {
 		})
 		btnDeleteStud.addEventListener("click", async (e) => {
 			this.popUp.classList.remove("active-popup")
-			const deleteStud = await fetch(URL + "/student/delete", {
-				method: "DELETE",
-				headers: {
-					userid: userId,
-					accessToken: sessionStorage.getItem("accessToken"),
-				},
-			})
-			if (deleteStud.ok)
+			const accessToken = sessionStorage.getItem("accessToken")
+			const deleteStud = await deleteStudent(accessToken, userId)
+			if (deleteStud)
 				wrap.dispatchEvent(new CustomEvent("deleteStudent", { bubbles: true }))
 		})
 		this.popUp.append(wrapperPopup)
@@ -116,16 +102,12 @@ export default class UserData {
 					updatedData[key] = value
 				})
 				const accessToken = sessionStorage.getItem("accessToken")
-				const sendData = await fetch(URL + "/student/update", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						userid: userId,
-						accessToken: accessToken,
-					},
-					body: JSON.stringify(updatedData),
-				})
-				if (sendData.ok) {
+				const sendData = await updateStudentInfo(
+					accessToken,
+					userId,
+					updatedData
+				)
+				if (sendData) {
 					this.successfullUpdate.classList.add("show-update")
 					setTimeout(() => {
 						this.successfullUpdate.classList.remove("show-update")
@@ -133,7 +115,6 @@ export default class UserData {
 				}
 			}
 		})
-
 		const wrapForButtons = createElement("div", "buttons-wrapper")
 		createElement(
 			"button",

@@ -50,7 +50,8 @@ export class Aside {
 		exit.addEventListener("click", (e) => {
 			const links = Array.from(this.nav.children)
 			links.forEach((el) => el.classList.remove("active-page"))
-			localStorage.removeItem("id")
+			sessionStorage.removeItem("accessToken")
+			document.cookie = `refreshToken=;max-age=1;path=/;SameSite=None;Secure`
 			this.el.dispatchEvent(new CustomEvent("exit", { bubbles: true }))
 		})
 		createElement(

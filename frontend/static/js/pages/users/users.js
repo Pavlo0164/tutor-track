@@ -1,5 +1,5 @@
-import { URL } from "../../config/config.js"
 import createElement from "../../functions/create-element.js"
+import { createStudent, getAllStudents } from "../../api/api.js"
 export default class Users {
 	constructor() {
 		this.inputAlive = false
@@ -21,20 +21,10 @@ export default class Users {
 	async updateShowStudents() {
 		try {
 			const accessToken = sessionStorage.getItem("accessToken")
-			const response = await fetch(URL + "/student/infoAll", {
-				method: "GET",
-				headers: {
-					accessToken: accessToken,
-				},
-			})
-			const body = await response.json()
-			const students = body.students
-			if (!response.ok)
-				throw new Error(`Error : ${response.status} ${response.statusText}`)
+			const students = await getAllStudents(accessToken)
 			const children = Array.from(this.allStudents.children)
 			if (children.length !== 0) children.forEach((item) => item.remove())
-			if (!students) return
-			if (students.length > 0)
+			if (students?.length > 0)
 				students.forEach((item) => {
 					const stud = createElement(
 						"div",
@@ -64,22 +54,10 @@ export default class Users {
 		try {
 			if (this.regExpCheckName.test(this.input.value)) {
 				const accessToken = sessionStorage.getItem("accessToken")
-				const newStud = await fetch(URL + "/student/create", {
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-						accessToken: accessToken,
-					},
-					body: JSON.stringify({
-						fullName: this.input.value,
-					}),
-				})
-				// if (newStud.ok) {
-
-				// }
+				const newStud = await createStudent(accessToken, this.input.value)
+				if (newStud) await this.updateShowStudents()
 				this.input.parentElement.remove()
 				this.inputAlive = false
-				await this.updateShowStudents()
 			} else throw new Error("Wrong full name")
 		} catch (error) {
 			console.log(error.message)

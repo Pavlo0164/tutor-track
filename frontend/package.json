@@ -1,14 +1,16 @@
 {
-  "name": "frontend",
-  "version": "1.0.0",
-  "main": "./static/js/app.js",
-  "scripts": {},
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "nodemon": "^3.1.7",
-    "uuid": "^10.0.0"
-  }
+	"name": "frontend",
+	"version": "1.0.0",
+	"main": "./static/js/app.js",
+	"scripts": {},
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"js-cookie": "^3.0.5"
+	},
+	"devDependencies": {
+		"@types/js-cookie": "^3.0.6",
+		"nodemon": "^3.1.7"
+	}
 }
