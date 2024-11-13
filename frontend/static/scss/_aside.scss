@@ -78,18 +78,17 @@
 	}
 	& .exit-button {
 		display: flex;
-		display: flex;
 		align-items: flex-start;
 		font-size: 25px;
 		gap: 5px;
-
+		padding: 10px 20px;
 		width: 100%;
 		&::before {
 			content: "";
 			display: block;
 			background: url("../img/exit.svg") 0 0 / contain no-repeat;
-			width: 27px;
-			height: 27px;
+			width: 25px;
+			height: 25px;
 		}
 	}
 	& .footer-text {

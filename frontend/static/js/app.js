@@ -138,12 +138,11 @@ class App {
 		const accessToken = sessionStorage.getItem("accessToken")
 		try {
 			if (!accessToken) {
-				
 				this.switchFunc(pathUrl)
 				return
 			}
 			const res = await checkAuth(accessToken)
-			if (!res.ok) this.switchFunc(pathUrl)
+			if (res.status !== 200) this.switchFunc(pathUrl)
 			else
 				switch (pathUrl) {
 					case "/home":

@@ -1,12 +1,13 @@
 {
 	"name": "frontend",
 	"version": "1.0.0",
-	"main": "./static/js/app.js",
+	"main": "./static/index.html",
 	"scripts": {},
 	"author": "",
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
+		"axios": "^1.7.7",
 		"js-cookie": "^3.0.5"
 	},
 	"devDependencies": {

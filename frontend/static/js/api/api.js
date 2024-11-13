@@ -1,3 +1,4 @@
+//import axios from "axios"
 import { URL } from "../config/config.js"
 export const login = async (info) => {
 	try {
@@ -49,13 +50,16 @@ export const createStudent = async (token, nameOfStudent) => {
 	return newStud.ok
 }
 export const checkAuth = async (token) => {
-	const res = await fetch(URL + "/checkToken", {
-		method: "GET",
-		headers: {
-			authorization: `Bearer ${token}`,
-		},
-	})
-	return res
+	try {
+		const response = await axios.get(URL + "/checkToken", {
+			headers: {
+				authorization: `Bearer ${token}`,
+			},
+		})
+		return response
+	} catch (error) {
+		return error.response
+	}
 }
 export const getUserInfo = async (token) => {
 	const res = await fetch(URL + "/email", {
