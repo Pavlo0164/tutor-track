@@ -60,7 +60,9 @@ export const checkAuth = async () => {
 		const response = await firstApiAxios.get(URL + "/checkToken")
 		return response
 	} catch (error) {
-		return error
+		console.log(error.response)
+
+		return error.response
 	}
 }
 

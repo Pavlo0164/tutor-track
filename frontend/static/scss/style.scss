@@ -1,3 +1,4 @@
+
 @import "./null";
 @import "./colors";
 @import "./auth";
@@ -6,6 +7,7 @@
 @import "./users-block";
 @import "./data-students";
 @import url("https://fonts.googleapis.com/css?family=Poppins:300,regular,500,600");
+
 body {
 	font-family: "Poppins", sans-serif;
 	color: $text-color-1;
@@ -27,16 +29,15 @@ body {
 		bottom: 5%;
 		right: -100%;
 		z-index: 4;
-		padding: 15px;
-		border-radius: 10px;
+		padding: 1rem;
+		border-radius: 0.7rem;
 		background-color: $base-background-3;
 		color: $succes-color;
-		border: 1px solid $succes-color;
-		box-shadow: 3px 3px 3px $aside-bk-color-2;
+		border: 0.07rem solid $succes-color;
+		box-shadow: 0.2rem 0.2rem 0.2rem $aside-bk-color-2;
 	}
 }
 .main-wrapper {
-	flex-grow: 1;
 	position: relative;
 	min-height: 100%;
 	max-height: 100%;
@@ -44,27 +45,30 @@ body {
 	overflow: hidden;
 	color: $text-color-1;
 	background-color: $base-background-1;
-	display: grid;
-	grid-template-columns: 250px 1fr;
+	display: flex;
 }
 
 .main-content {
-	padding: 30px;
+	padding: 2.2rem;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 0.7rem;
+	flex-grow: 1;
 	background-color: $base-background-1;
+	@media (max-width: 1250px) {
+		padding: 1.3rem;
+	}
+	@media (max-width: 1050px) {
+		padding: 0.7rem;
+	}
 }
 .users-content {
 	height: 100%;
-	display: grid;
-	grid-template-columns: 250px 1fr;
-	@media (max-width: 1250px) {
-		grid-template-columns: 200px 1fr;
-	}
+	display: flex;
 }
 .users-info {
-	padding: 20px;
+	padding: 1.2rem;
 	overflow-x: auto;
 	max-height: 80vh;
+	flex-grow: 1;
 }
