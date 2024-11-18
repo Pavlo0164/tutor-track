@@ -10,25 +10,22 @@ export class Data {
 			"data-content": "",
 		})
 		this.wrap.addEventListener("checkUserData", (e) => {
-			const id = e.detail._id
-			this.userData = new UserData(true, id)
+			this.userData = new UserData()
 			this.wrap.lastElementChild.remove()
 			this.wrap.append(this.userData.el)
 		})
 		this.wrap.addEventListener("deleteStudent", (e) => {
 			this.wrap.firstElementChild.remove()
 			this.wrap.lastElementChild.remove()
-			this.userData = new UserData(false)
+			this.userData = new UserData()
 			this.wrap.append(new Users().el, this.userData.el)
 		})
-
 		this.wrap.addEventListener("firstStudent", (e) => {
-			const id = e.detail.id
 			this.wrap.lastElementChild.remove()
-			this.userData = new UserData(true, id)
+			this.userData = new UserData()
 			this.wrap.append(this.userData.el)
 		})
-		this.userData = new UserData(false)
+		this.userData = new UserData()
 		this.wrap.append(new Users().el, this.userData.el)
 
 		return this.wrap

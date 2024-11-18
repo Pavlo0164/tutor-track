@@ -18,22 +18,21 @@ export class Aside {
 		return link
 	}
 	addClassToHome() {
-		const homeButton = this.el.querySelector(".link-home")
-		homeButton.classList.add("active-page")
+		const homeButton = this.el?.querySelector(".link-home")
+		homeButton?.classList.add("active-page")
 	}
 	render() {
 		const wrap = createElement("div", ["main-wrapper__aside", "aside"])
 		createElement("h1", ["aside__title", "main-title"], null, null, wrap)
 		this.nav = createElement("nav", ["aside__menu", "menu"], null, null, wrap)
-		this.nav.addEventListener("click", (e) => {
-			const links = Array.from(this.nav.children)
-			if (e.target.classList.contains("menu__link")) {
-				links.forEach((el) => el.classList.remove("active-page"))
-				e.target.classList.add("active-page")
-			}
-		})
+		const homeLink = this.createLink(
+			"/home",
+			"Home",
+			"link-home",
+			"active-page"
+		)
 		this.nav.append(
-			this.createLink("/home", "Home", "link-home"),
+			homeLink,
 			this.createLink("/data", "Data", "link-data"),
 			this.createLink("/pay", "Pay", "link-pay"),
 			this.createLink("/schedule", "Schedule", "link-schedule"),
@@ -51,7 +50,7 @@ export class Aside {
 			const links = Array.from(this.nav.children)
 			links.forEach((el) => el.classList.remove("active-page"))
 			sessionStorage.removeItem("accessToken")
-			document.cookie = `refreshToken=;max-age=1;path=/;SameSite=None;Secure`
+			Cookies.remove("refreshToken")
 			this.el.dispatchEvent(new CustomEvent("exit", { bubbles: true }))
 		})
 		createElement(

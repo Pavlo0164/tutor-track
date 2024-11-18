@@ -7,7 +7,6 @@ const cors = require("cors")
 const bodyParser = require("body-parser")
 
 const mongoose = require("mongoose")
-const Teacher = require("./dbTeacher.js")
 
 const studentRouter = require("./routes/student.js")
 const authRouter = require("./routes/auth.js")
@@ -32,6 +31,10 @@ app.use("/auth", authRouter)
 app.get("/email", CheckAuth.checkToken, (req, res) => {
 	const { username, email } = req.user
 	res.status(200).json({ email: email, name: username })
+})
+app.post("/updateToken", (req, res) => {
+	const { refreshToken } = req.body
+	CheckAuth.updateAccessToken(res, refreshToken)
 })
 app.get("/checkToken", CheckAuth.checkToken, (req, res) => {
 	res.status(200).end()

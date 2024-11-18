@@ -43,7 +43,7 @@ route.put("/create", CheckAuth.checkToken, async (req, res) => {
 		const { id } = req.user
 		const fullName = req.body.fullName
 		if (!fullName)
-			return res.status(401).json({ message: "Fullname is required" })
+			return res.status(404).json({ message: "Fullname is required" })
 		const student = new Student({ teacher: id, name: fullName })
 		await student.save()
 		await Teacher.findByIdAndUpdate(id, {

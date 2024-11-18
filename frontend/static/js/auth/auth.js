@@ -21,7 +21,6 @@ export class Auth {
 		}
 		this.el = this.render()
 	}
-
 	check(
 		type,
 		errText,
@@ -126,8 +125,8 @@ export class Auth {
 			}
 			const reg = await registr(user)
 			this.spinner.classList.remove("active-spinner")
-			if (reg.status >= 300) {
-				this.resultErr.innerText = reg.message
+			if (reg.status > 299) {
+				this.resultErr.innerText = reg
 				return
 			}
 			this.el.dispatchEvent(

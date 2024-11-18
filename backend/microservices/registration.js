@@ -12,10 +12,10 @@ class RegistrationService {
 	}
 	async registartionTeacher(username, email, password, confirmPassword) {
 		if (password !== confirmPassword)
-			return { status: 401, message: "Passwords do not match" }
+			return { status: 402, message: "Passwords do not match" }
 		try {
 			const teacher = await Teacher.findOne({ email })
-			if (teacher) return { status: 401, message: "Username already exists" }
+			if (teacher) return { status: 402, message: "Username already exists" }
 			const hashedPassword = await bcrypt.hash(password, 10)
 
 			const newTeacher = await Teacher.create({
@@ -29,7 +29,7 @@ class RegistrationService {
 				email,
 				newTeacher.role,
 				newTeacher._id,
-				"90d"
+				"30d"
 			)
 			const hashedRefreshToken = await bcrypt.hash(refreshToken, 10)
 			const accessToken = this.createJwtToken(
@@ -37,7 +37,7 @@ class RegistrationService {
 				email,
 				newTeacher.role,
 				newTeacher._id,
-				"30m"
+				"15m"
 			)
 			const newRefreshToken = await RefreshToken.create({
 				token: hashedRefreshToken,
@@ -63,18 +63,18 @@ class RegistrationService {
 			})
 			if (!teacher)
 				return {
-					status: 401,
+					status: 402,
 					message: "Username not exists",
 				}
 			const checkPassword = await bcrypt.compare(passwordUser, teacher.password)
-			if (!checkPassword) return { status: 401, message: "Wrong password" }
+			if (!checkPassword) return { status: 402, message: "Wrong password" }
 			const refreshToken = await RefreshToken.findOne({ userId: teacher._id })
 			const newRefreshToken = this.createJwtToken(
 				teacher.name,
 				teacher.email,
 				teacher.role,
 				teacher._id,
-				"90d"
+				"30d"
 			)
 			const hashedRefreshToken = await bcrypt.hash(newRefreshToken, 10)
 			const newAccessToken = this.createJwtToken(
@@ -82,7 +82,7 @@ class RegistrationService {
 				teacher.email,
 				teacher.role,
 				teacher._id,
-				"30m"
+				"15m"
 			)
 			if (refreshToken) {
 				refreshToken.token = hashedRefreshToken

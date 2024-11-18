@@ -6,6 +6,9 @@
 	overflow-x: scroll;
 	border-right: 1px solid $border-color;
 	padding: 5px;
+	@media (max-width: 1250px) {
+		
+	}
 	& > .wrap-students {
 		margin-bottom: 10px;
 		& > .one-stud {

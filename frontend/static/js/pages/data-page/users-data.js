@@ -5,15 +5,14 @@ import {
 	updateStudentInfo,
 } from "../../api/api.js"
 export default class UserData {
-	constructor(type, id = null) {
-		this.id = id
+	constructor() {
 		this.el = this.render()
 		this.init(this.id)
 	}
 	async init(id) {
 		if (!id) return
 		try {
-			const { data, userId } = await this.getInfoAboutStudent()
+			const { data, userId } = await getOneStudent(id)
 			if (data) {
 				this.wrap.innerText = ""
 				this.wrap.append(this.createInfoPage(data.student, userId))
@@ -22,19 +21,10 @@ export default class UserData {
 			this.wrap.innerText = "Error loading student information"
 		}
 	}
-	async getInfoAboutStudent() {
-		const userId = this.id
-		const accessToken = sessionStorage.getItem("accessToken")
-		try {
-			return await getOneStudent(accessToken, userId)
-		} catch (error) {
-			console.log(error.message)
-		}
-	}
+
 	createInput(type, labelValue, value = null, name) {
 		const wrap = createElement("div", "input-student-wrap")
 		createElement("label", null, { for: name }, labelValue, wrap)
-
 		const input = createElement(
 			"input",
 			null,
@@ -80,9 +70,8 @@ export default class UserData {
 		})
 		btnDeleteStud.addEventListener("click", async (e) => {
 			this.popUp.classList.remove("active-popup")
-			const accessToken = sessionStorage.getItem("accessToken")
-			const deleteStud = await deleteStudent(accessToken, userId)
-			if (deleteStud)
+			const deleteStud = await deleteStudent(userId)
+			if (deleteStud < 300)
 				wrap.dispatchEvent(new CustomEvent("deleteStudent", { bubbles: true }))
 		})
 		this.popUp.append(wrapperPopup)
@@ -101,13 +90,8 @@ export default class UserData {
 				formData.forEach((value, key) => {
 					updatedData[key] = value
 				})
-				const accessToken = sessionStorage.getItem("accessToken")
-				const sendData = await updateStudentInfo(
-					accessToken,
-					userId,
-					updatedData
-				)
-				if (sendData) {
+				const sendData = await updateStudentInfo(userId, updatedData)
+				if (sendData < 300) {
 					this.successfullUpdate.classList.add("show-update")
 					setTimeout(() => {
 						this.successfullUpdate.classList.remove("show-update")
@@ -181,13 +165,12 @@ export default class UserData {
 		return wrap
 	}
 	render() {
-		let inner = ""
-		if (!this.id) inner = "You don`t have any student"
+		this.id = new URLSearchParams(window.location.search).get("id")
 		this.wrap = createElement(
 			"div",
 			["users-content__info", "users-info"],
 			null,
-			inner
+			this.id ? "" : "You don`t have any student"
 		)
 		return this.wrap
 	}

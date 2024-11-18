@@ -12,16 +12,22 @@ export default class Users {
 			el.classList.remove("active-stude")
 		})
 		e.target.classList.add("active-stude")
-		const eventMy = new CustomEvent("checkUserData", {
-			detail: { _id: e.target.getAttribute("data-id") },
-			bubbles: true,
-		})
-		e.target.dispatchEvent(eventMy)
+		const id = e.target.getAttribute("data-id")
+		window.history.pushState(
+			{},
+			"",
+			`${window.location.origin}${window.location.pathname}?id=${id}`
+		)
+		e.target.dispatchEvent(
+			new CustomEvent("checkUserData", {
+				detail: { _id: id },
+				bubbles: true,
+			})
+		)
 	}
 	async updateShowStudents() {
 		try {
-			const accessToken = sessionStorage.getItem("accessToken")
-			const students = await getAllStudents(accessToken)
+			const students = await getAllStudents()
 			const children = Array.from(this.allStudents.children)
 			if (children.length !== 0) children.forEach((item) => item.remove())
 			if (students?.length > 0)
@@ -38,14 +44,25 @@ export default class Users {
 			const firstStudent = this.allStudents.firstElementChild
 			if (firstStudent) {
 				firstStudent.classList.add("active-stude")
+				const id = firstStudent.getAttribute("data-id")
 				const eventFirtsStudent = new CustomEvent("firstStudent", {
 					detail: {
-						id: firstStudent.getAttribute("data-id"),
+						id: id,
 					},
 					bubbles: true,
 				})
+				window.history.pushState(
+					{},
+					"",
+					`${window.location.origin}${window.location.pathname}?id=${id}`
+				)
 				this.allStudents.dispatchEvent(eventFirtsStudent)
-			}
+			} else
+				window.history.pushState(
+					{},
+					"",
+					`${window.location.origin}${window.location.pathname}`
+				)
 		} catch (error) {
 			console.log(error)
 		}
@@ -53,8 +70,7 @@ export default class Users {
 	async createNewStudents() {
 		try {
 			if (this.regExpCheckName.test(this.input.value)) {
-				const accessToken = sessionStorage.getItem("accessToken")
-				const newStud = await createStudent(accessToken, this.input.value)
+				const newStud = await createStudent(this.input.value)
 				if (newStud) await this.updateShowStudents()
 				this.input.parentElement.remove()
 				this.inputAlive = false
@@ -79,12 +95,13 @@ export default class Users {
 			"Add",
 			inputWrap
 		)
-
 		button.addEventListener("click", async () => {
 			try {
 				await this.createNewStudents()
 				this.btnCancel.firstElementChild.classList.remove("show-btn")
-			} catch (error) {}
+			} catch (error) {
+				console.log(error)
+			}
 		})
 		return inputWrap
 	}

@@ -6,7 +6,7 @@ import { Pay } from "./pages/pay/pay.js"
 import { Plan } from "./pages/plan/plan.js"
 import { Schedule } from "./pages/schedule/schedule.js"
 import { Settings } from "./pages/settings/settings.js"
-
+import createElement from "./functions/create-element.js"
 import { checkAuth, getUserInfo } from "./api/api.js"
 class App {
 	constructor() {
@@ -20,15 +20,12 @@ class App {
 			const pathUrl = location.pathname
 			const accessToken = sessionStorage.getItem("accessToken")
 			if (pathUrl !== "/login" && pathUrl !== "/signUp" && accessToken) {
-				const { status, statusText, name, email } = await getUserInfo(
-					accessToken
-				)
-				if (!name) throw new Error(`Error ${status} ${statusText}`)
+				const { email, name } = await getUserInfo(accessToken)
 				this.main.header.changeUserName(name)
 				this.main.header.changeUserEmail(email)
 			}
 		} catch (error) {
-			console.log(error.message)
+			throw new Error(`Error ${error.status} ${error.statusText}`)
 		}
 	}
 	routeToPage(e) {
@@ -133,6 +130,21 @@ class App {
 				this.changeHref("/login")
 		}
 	}
+	successfullSpinner() {
+		const wrapSpinner = createElement(
+			"div",
+			"login-spinner",
+			null,
+			"Login was successfull!!!"
+		)
+		this.body.append(wrapSpinner)
+
+		wrapSpinner.classList.add("active")
+		setTimeout(() => {
+			wrapSpinner.classList.remove("active")
+			setTimeout(() => this.body.lastElementChild.remove(), 1000)
+		}, 2000)
+	}
 	async checkAuth() {
 		const pathUrl = location.pathname
 		const accessToken = sessionStorage.getItem("accessToken")
@@ -141,9 +153,9 @@ class App {
 				this.switchFunc(pathUrl)
 				return
 			}
-			const res = await checkAuth(accessToken)
-			if (res.status !== 200) this.switchFunc(pathUrl)
-			else
+			const res = await checkAuth()
+			if (res.status >= 300) this.switchFunc(pathUrl)
+			else {
 				switch (pathUrl) {
 					case "/home":
 					case "/data":
@@ -157,7 +169,9 @@ class App {
 						this.changeHref("/home")
 						break
 				}
+			}
 		} catch (error) {
+			this.changeHref("/login")
 			console.log(error)
 		}
 	}
@@ -168,22 +182,21 @@ class App {
 	async work() {
 		try {
 			await this.checkAuth()
-			this.body.addEventListener("register", async () => {
+			this.body.addEventListener("register", async (e) => {
 				await this.checkAuth()
+				this.successfullSpinner()
 			})
-			this.body.addEventListener("exit", async () => {
-				this.auth.password.value = ""
-				this.auth.email.value = ""
-				await this.checkAuth()
-			})
+
+			this.body.addEventListener("exit", await this.checkAuth.bind(this))
 		} catch (error) {
-			console.log(error)
+			console.log(error.message)
 		}
-		this.body.addEventListener("click", (e) => this.routeToPage(e))
-		window.addEventListener("popstate", (e) => this.route())
-		this.body.addEventListener("updateActiveButton", (e) => {
-			this.main.aside.addClassToHome()
-		})
+		this.body.addEventListener("click", this.routeToPage.bind(this))
+		window.addEventListener("popstate", this.route.bind(this))
+		this.body.addEventListener(
+			"updateActiveButton",
+			this.main.aside.addClassToHome.bind(this)
+		)
 	}
 }
 const app = new App()

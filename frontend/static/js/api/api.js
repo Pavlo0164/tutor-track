@@ -1,125 +1,118 @@
-//import axios from "axios"
 import { URL } from "../config/config.js"
+axios.defaults.headers.common = {
+	"Content-Type": "application/json",
+}
+const firstApiAxios = axios.create()
+firstApiAxios.interceptors.request.use((config) => {
+	config.headers["authorization"] = `Bearer ${sessionStorage.getItem(
+		"accessToken"
+	)}`
+	return config
+})
+firstApiAxios.interceptors.response.use(
+	(res) => res,
+	async (err) => {
+		const originalRequest = err.config
+		if (axios.isAxiosError(err) && err.response?.status === 401) {
+			const { data } = await firstApiAxios.post(URL + "/updateToken", {
+				refreshToken: Cookies.get("refreshToken"),
+			})
+			sessionStorage.setItem("accessToken", data.accessToken)
+			Cookies.set("refreshToken", data.refreshToken, { expires: 30 })
+			originalRequest.headers["authorization"] = `Bearer ${data.accessToken}`
+			return firstApiAxios(originalRequest)
+		}
+		return err
+	}
+)
 export const login = async (info) => {
 	try {
-		const reg = await fetch(URL + "/auth/login", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(info),
-		})
-		const data = await reg.json()
-		if (!reg.ok) return { message: data.message }
-		sessionStorage.setItem("accessToken", data.accessToken)
-		document.cookie = `refreshToken=${data.refreshToken};max-age=${
-			90 * 24 * 60 * 60
-		};path=/;SameSite=None;Secure`
-		return data
+		const reg = await axios.post(URL + "/auth/login", info)
+		sessionStorage.setItem("accessToken", reg.data.accessToken)
+		Cookies.set("refreshToken", reg.data.refreshToken, { expires: 30 })
+		return reg
 	} catch (err) {
-		console.log(err)
+		return err.statusText
 	}
 }
 export const registr = async (info) => {
-	const reg = await fetch(URL + "/auth/registr", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(info),
-	})
-	const data = await reg.json()
-	if (!reg.ok) return { message: data.message }
-	sessionStorage.setItem("accessToken", data.accessToken)
-	document.cookie = `refreshToken=${data.refreshToken};max-age=${
-		90 * 24 * 60 * 60
-	};path=/;SameSite=None;Secure`
-	return data
-}
-export const createStudent = async (token, nameOfStudent) => {
-	const newStud = await fetch(URL + "/student/create", {
-		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-			authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({
-			fullName: nameOfStudent,
-		}),
-	})
-	return newStud.ok
-}
-export const checkAuth = async (token) => {
 	try {
-		const response = await axios.get(URL + "/checkToken", {
-			headers: {
-				authorization: `Bearer ${token}`,
-			},
+		const reg = await axios.post(URL + "/auth/registr", info)
+		sessionStorage.setItem("accessToken", reg.data.accessToken)
+		Cookies.set("refreshToken", reg.data.refreshToken, { expires: 30 })
+		return reg
+	} catch (err) {
+		return { message: err.response.statusText }
+	}
+}
+export const createStudent = async (nameOfStudent) => {
+	try {
+		const response = await firstApiAxios.put(URL + "/student/create", {
+			fullName: nameOfStudent,
 		})
+		return response.status
+	} catch (err) {
+		return false
+	}
+}
+export const checkAuth = async () => {
+	try {
+		const response = await firstApiAxios.get(URL + "/checkToken")
 		return response
 	} catch (error) {
-		return error.response
+		return error
 	}
 }
-export const getUserInfo = async (token) => {
-	const res = await fetch(URL + "/email", {
-		method: "GET",
-		headers: {
-			authorization: `Bearer ${token}`,
-		},
-	})
-	const data = await res.json()
-	const answer = {
-		status: res.status,
-		status: res.statusText,
-		name: data.name || undefined,
-		email: data.email || undefined,
+
+export const getUserInfo = async () => {
+	try {
+		const response = await firstApiAxios.get(URL + "/email")
+		return response.data
+	} catch (err) {
+		return err.response
 	}
-	return answer
 }
-export const getAllStudents = async (token) => {
-	const response = await fetch(URL + "/student/infoAll", {
-		method: "GET",
-		headers: {
-			authorization: `Bearer ${token}`,
-		},
-	})
-	if (!response.ok)
-		throw new Error(`Error : ${response.status} ${response.statusText}`)
-	const body = await response.json()
-	return body.students
+export const getAllStudents = async () => {
+	try {
+		const { data } = await firstApiAxios.get(URL + "/student/infoAll")
+		return data.students
+	} catch (err) {
+		throw new Error(`Error : ${err.status} ${err.statusText}`)
+	}
 }
-export const getOneStudent = async (token, userId) => {
-	const res = await fetch(URL + "/student/infoOne", {
-		method: "GET",
-		headers: {
-			userid: userId,
-			authorization: `Bearer ${token}`,
-		},
-	})
-	if (!res.ok) throw new Error(`Error : ${res.status} ${res.statusText}`)
-	const data = await res.json()
-	return { data, userId }
+export const getOneStudent = async (userId) => {
+	try {
+		const res = await firstApiAxios.get(URL + "/student/infoOne", {
+			headers: {
+				userid: userId,
+			},
+		})
+		const answer = {
+			data: res.data,
+			userId: userId,
+		}
+		return answer
+	} catch (err) {
+		throw new Error(`Error : ${err.status} ${err.statusText}`)
+	}
 }
-export const deleteStudent = async (token, userId) => {
-	const deleteStud = await fetch(URL + "/student/delete", {
-		method: "DELETE",
+export const deleteStudent = async (userId) => {
+	const deleteStud = await firstApiAxios.delete(URL + "/student/delete", {
 		headers: {
 			userid: userId,
-			authorization: `Bearer ${token}`,
 		},
 	})
-	return deleteStud.ok
+	return deleteStud.status
 }
-export const updateStudentInfo = async (token, userId, updatedData) => {
-	const sendData = await fetch(URL + "/student/update", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			userid: userId,
-			authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify(updatedData),
-	})
-	return sendData.ok
+export const updateStudentInfo = async (userId, updatedData) => {
+	const sendData = await firstApiAxios.post(
+		URL + "/student/update",
+		updatedData,
+		{
+			headers: {
+				userid: userId,
+			},
+		}
+	)
+	return sendData.status
 }
